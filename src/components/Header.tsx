@@ -8,8 +8,11 @@ export function Header() {
     <header className="site-header">
       <div className="container site-header__inner">
         <Link to="/" className="brand">
-          <span className="brand__mark">Prólogos</span>
-          <span className="brand__sub">Librería</span>
+          <img src="/logo.svg" alt="Prólogos" className="brand__logo" width="40" height="40" />
+          <span className="brand__text">
+            <span className="brand__mark">Prólogos</span>
+            <span className="brand__sub">Librería</span>
+          </span>
         </Link>
 
         <nav className="site-nav">
