@@ -1,0 +1,39 @@
+import { Link, NavLink } from 'react-router-dom';
+import { useCart } from '../context/CartContext';
+
+export function Header() {
+  const { totalItems } = useCart();
+
+  return (
+    <header className="site-header">
+      <div className="container site-header__inner">
+        <Link to="/" className="brand">
+          <span className="brand__mark">Prólogos</span>
+          <span className="brand__sub">Librería</span>
+        </Link>
+
+        <nav className="site-nav">
+          <NavLink to="/" end>
+            Inicio
+          </NavLink>
+          <NavLink to="/catalogo">Catálogo</NavLink>
+        </nav>
+
+        <Link to="/carrito" className="cart-link" aria-label="Ver carrito">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path
+              d="M3 3h2l2.4 12.3a1 1 0 0 0 1 .8h9.7a1 1 0 0 0 1-.8L21 7H6"
+              stroke="currentColor"
+              strokeWidth="1.7"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <circle cx="9" cy="20" r="1.4" fill="currentColor" />
+            <circle cx="18" cy="20" r="1.4" fill="currentColor" />
+          </svg>
+          {totalItems > 0 && <span className="cart-link__count">{totalItems}</span>}
+        </Link>
+      </div>
+    </header>
+  );
+}
