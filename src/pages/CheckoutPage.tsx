@@ -21,6 +21,7 @@ export function CheckoutPage() {
   });
   const [enviando, setEnviando] = useState(false);
   const [numeroEnviado, setNumeroEnviado] = useState<string | null>(null);
+  const [urlPedido, setUrlPedido] = useState('');
 
   if (numeroEnviado !== null) {
     return (
@@ -32,7 +33,10 @@ export function CheckoutPage() {
             : 'Tu pedido quedó registrado.'}{' '}
           Te atenderemos por WhatsApp para coordinar el pago y el envío.
         </p>
-        <Link to="/catalogo" className="btn btn--lg">
+        <a href={urlPedido} target="_blank" rel="noreferrer" className="btn btn--lg">
+          Abrir WhatsApp
+        </a>{' '}
+        <Link to="/catalogo" className="btn btn--ghost btn--lg">
           Seguir explorando
         </Link>
       </div>
@@ -67,6 +71,10 @@ export function CheckoutPage() {
   async function confirmarPedido() {
     if (!formularioCompleto || enviando) return;
     setEnviando(true);
+    // La ventana se abre de forma síncrona, antes de cualquier await: los
+    // navegadores (Safari sobre todo) bloquean popups que no nacen dentro del
+    // gesto del usuario, y WhatsApp es el único canal de venta.
+    const ventana = window.open('', '_blank');
     // El registro en Firestore alimenta el panel; si falla, la venta sigue
     // por WhatsApp sin bloquearse.
     let numero: string | null = null;
@@ -87,7 +95,13 @@ export function CheckoutPage() {
     const encabezado = numero
       ? `Hola Prólogos 👋, confirmo el pedido ${numero}:\n\n`
       : 'Hola Prólogos 👋, confirmo este pedido:\n\n';
-    window.open(urlWhatsApp(encabezado + cuerpoMensaje), '_blank', 'noopener');
+    const url = urlWhatsApp(encabezado + cuerpoMensaje);
+    if (ventana) {
+      ventana.location.href = url;
+    }
+    // Aunque el popup haya sido bloqueado, el pedido no se pierde: la pantalla
+    // de confirmación ofrece el enlace "Abrir WhatsApp" con esta misma URL.
+    setUrlPedido(url);
     vaciar();
     setNumeroEnviado(numero ?? '');
     setEnviando(false);
@@ -137,7 +151,7 @@ export function CheckoutPage() {
 
           <button
             type="button"
-            className={`btn btn--lg btn--block ${!formularioCompleto ? 'btn--disabled' : ''}`}
+            className={`btn btn--lg btn--block ${!formularioCompleto || enviando ? 'btn--disabled' : ''}`}
             onClick={confirmarPedido}
             disabled={!formularioCompleto || enviando}
           >
