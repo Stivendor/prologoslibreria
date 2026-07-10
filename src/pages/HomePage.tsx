@@ -2,14 +2,12 @@ import { Link } from 'react-router-dom';
 import { useCatalogo } from '../hooks/useCatalogo';
 import { BookCard } from '../components/BookCard';
 import { TrustBadges } from '../components/TrustBadges';
-import { Testimonials } from '../components/Testimonials';
 import { BookCover } from '../components/BookCover';
 import { CONTACTO } from '../config';
 
 export function HomePage() {
   const { libros, categorias, cargando, error } = useCatalogo();
   const destacados = libros.filter((l) => l.destacado);
-  const masVendidos = libros.filter((l) => l.mas_vendido);
   const spines = destacados.slice(0, 3);
 
   return (
@@ -98,27 +96,6 @@ export function HomePage() {
             </div>
           </section>
 
-          {/* Más vendidos */}
-          {masVendidos.length > 0 && (
-            <section className="container section">
-              <div className="section-head">
-                <div>
-                  <span className="section-head__num">03</span>
-                  <h2 className="section-title">Los más vendidos</h2>
-                </div>
-                <Link to="/catalogo" className="section-head__link">
-                  Ver todo
-                </Link>
-              </div>
-              <div className="grid">
-                {masVendidos.map((libro) => (
-                  <BookCard key={libro.id} libro={libro} />
-                ))}
-              </div>
-            </section>
-          )}
-
-          <Testimonials />
         </>
       )}
     </div>

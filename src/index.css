@@ -442,42 +442,6 @@ img {
   font-size: 1.2rem;
 }
 
-/* ---------- Testimonios ---------- */
-.testimonios {
-  background: var(--color-blanco);
-  border-top: 1px solid var(--color-borde);
-  padding: 3rem 0;
-}
-.testimonios__grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.25rem;
-  margin-top: 1.8rem;
-}
-.testimonio {
-  border: 1px solid var(--color-borde);
-  border-radius: var(--radio);
-  padding: 1.5rem;
-  margin: 0;
-  background: #fbfbfb;
-}
-.testimonio__stars {
-  color: var(--color-vino-osc);
-  letter-spacing: 2px;
-  margin-bottom: 0.8rem;
-}
-.testimonio blockquote {
-  margin: 0 0 1rem;
-  font-family: var(--fuente-titulo);
-  font-size: 1.05rem;
-  line-height: 1.5;
-  color: var(--color-tinta);
-}
-.testimonio figcaption {
-  font-size: 0.9rem;
-  color: var(--color-tinta-suave);
-}
-
 /* ---------- Grid de libros ---------- */
 .grid {
   display: grid;
@@ -492,7 +456,23 @@ img {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  transition: box-shadow 0.18s ease, transform 0.18s ease, border-color 0.18s ease;
+  /* estado oculto inicial; se revela al entrar en viewport (IntersectionObserver) */
+  opacity: 0;
+  translate: 0 12px;
+  transition: opacity 0.45s ease, translate 0.45s ease,
+    box-shadow 0.18s ease, transform 0.18s ease, border-color 0.18s ease;
+}
+.book-card.is-visible {
+  opacity: 1;
+  translate: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .book-card {
+    opacity: 1;
+    translate: none;
+    transition: box-shadow 0.18s ease, transform 0.18s ease, border-color 0.18s ease;
+  }
 }
 .book-card:hover {
   box-shadow: var(--sombra-alta);
@@ -536,34 +516,9 @@ img {
   font-size: 1.05rem;
   color: var(--color-vino-osc);
 }
-.book-card__price-old {
-  font-size: 0.85rem;
-  color: var(--color-tinta-suave);
-  text-decoration: line-through;
-}
 .book-card__add {
   margin-bottom: 0;
   opacity: 0.92;
-}
-
-/* Estrellas de calificación */
-.stars {
-  display: inline-flex;
-  align-items: center;
-  gap: 1px;
-}
-.star {
-  width: 14px;
-  height: 14px;
-  fill: #d6d6d6;
-}
-.star--on {
-  fill: var(--color-vino-osc);
-}
-.stars__count {
-  margin-left: 0.35rem;
-  font-size: 0.75rem;
-  color: var(--color-tinta-suave);
 }
 
 /* Etiqueta / tag sobre la portada */
@@ -844,6 +799,13 @@ img {
   font-size: 1rem;
   font-weight: 400;
 }
+.field-error {
+  display: block;
+  margin-top: 0.3rem;
+  font-weight: 400;
+  font-size: 0.8rem;
+  color: var(--color-vino);
+}
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -969,8 +931,7 @@ img {
     grid-template-columns: repeat(2, 1fr);
     gap: 1.1rem;
   }
-  .cats-grid,
-  .testimonios__grid {
+  .cats-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
@@ -996,12 +957,18 @@ img {
     grid-template-columns: repeat(2, 1fr);
     gap: 0.9rem;
   }
-  .cats-grid,
-  .testimonios__grid {
+  .cats-grid {
     grid-template-columns: 1fr;
   }
   .promo__spine {
     width: 135px;
+  }
+  .site-footer__top {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem 1.25rem;
+  }
+  .site-footer__brand {
+    grid-column: 1 / -1;
   }
 }
 

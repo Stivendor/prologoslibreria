@@ -41,8 +41,9 @@ export function CheckoutPage() {
     `\n\nTotal: ${formatearPrecio(totalPrecio)}` +
     `\n\nDatos de envío:\n${datos.nombre}\n${datos.telefono}\n${datos.ciudad} — ${datos.direccion}\n${datos.email}`;
 
+  const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(datos.email);
   const formularioCompleto =
-    datos.nombre && datos.email && datos.telefono && datos.ciudad && datos.direccion;
+    datos.nombre && emailValido && datos.telefono && datos.ciudad && datos.direccion;
 
   return (
     <div className="container section">
@@ -61,6 +62,9 @@ export function CheckoutPage() {
           <label>
             Correo electrónico
             <input type="email" value={datos.email} onChange={set('email')} required />
+            {datos.email && !emailValido && (
+              <span className="field-error">Ingresa un correo válido.</span>
+            )}
           </label>
           <label>
             Teléfono / WhatsApp

@@ -15,12 +15,8 @@ export interface Libro {
   categoria_id: string;
   activo: boolean;
   destacado: boolean;
-  /* Campos de presentación (datos de muestra en el MVP) */
-  calificacion?: number;
-  resenas?: number;
+  /* Etiqueta editorial opcional (p. ej. "Novedad", "Clásico"). */
   etiqueta?: string;
-  precio_antes?: number;
-  mas_vendido?: boolean;
 }
 
 export interface CartItem {

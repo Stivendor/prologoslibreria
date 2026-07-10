@@ -17,7 +17,7 @@ export function Footer() {
           <p className="site-footer__heading">Tienda</p>
           <Link to="/catalogo">Catálogo</Link>
           <Link to="/catalogo?categoria=devocionales">Devocionales</Link>
-          <Link to="/catalogo?categoria=biblias">Biblias</Link>
+          <Link to="/catalogo?categoria=vida-cristiana">Vida cristiana</Link>
           <Link to="/carrito">Mi carrito</Link>
         </nav>
 
