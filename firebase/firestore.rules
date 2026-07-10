@@ -1,24 +1,48 @@
 rules_version = '2';
 
 // Reglas de seguridad de Firestore para Prólogos Librería.
-// Catálogo: lectura pública, escritura solo desde el backend (Admin SDK / consola).
-// Pedidos: el cliente puede crear un pedido; leer/editar queda restringido al backend.
+// Catálogo: lectura pública, escritura solo del administrador autenticado.
+// Pedidos: cualquiera puede CREAR un pedido válido (checkout); leer y
+// gestionar estados queda restringido al administrador.
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    // UID del usuario administrador (Firebase Auth → Users).
+    function esAdmin() {
+      return request.auth != null && request.auth.uid == 'UID_ADMIN';
+    }
+
+    // Valida el esquema de un pedido entrante para impedir abuso del
+    // create público: solo los campos esperados, con tipos y tamaños acotados.
+    function pedidoValido() {
+      let d = request.resource.data;
+      return d.keys().hasOnly(['numero', 'items', 'total', 'cliente', 'estado', 'creado_en', 'actualizado_en'])
+        && d.estado == 'nuevo'
+        && d.numero is string && d.numero.size() <= 30
+        && d.total is number && d.total > 0
+        && d.items is list && d.items.size() > 0 && d.items.size() <= 50
+        && d.cliente is map
+        && d.cliente.keys().hasOnly(['nombre', 'telefono', 'email', 'ciudad', 'direccion'])
+        && d.cliente.nombre is string && d.cliente.nombre.size() > 0 && d.cliente.nombre.size() <= 120
+        && d.cliente.telefono is string && d.cliente.telefono.size() > 0 && d.cliente.telefono.size() <= 30
+        && d.cliente.email is string && d.cliente.email.size() <= 120
+        && d.cliente.ciudad is string && d.cliente.ciudad.size() <= 80
+        && d.cliente.direccion is string && d.cliente.direccion.size() <= 200;
+    }
+
     match /categorias/{id} {
       allow read: if true;
-      allow write: if false;
+      allow write: if esAdmin();
     }
 
     match /libros/{id} {
       allow read: if true;
-      allow write: if false;
+      allow write: if esAdmin();
     }
 
     match /pedidos/{id} {
-      allow create: if true;
-      allow read, update, delete: if false;
+      allow create: if pedidoValido();
+      allow read, update, delete: if esAdmin();
     }
   }
 }
