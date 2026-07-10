@@ -1,10 +1,14 @@
 import {
+  addDoc,
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
   orderBy,
   query,
+  serverTimestamp,
+  updateDoc,
   where,
 } from 'firebase/firestore';
 import type { Categoria, Libro } from '../types';
@@ -38,4 +42,36 @@ export async function obtenerLibro(id: string): Promise<Libro | null> {
     return snap.exists() ? ({ id: snap.id, ...snap.data() } as Libro) : null;
   }
   return librosSeed.find((l) => l.id === id) ?? null;
+}
+
+// --- Operaciones del panel de administración ---
+// Requieren Firebase: el admin no tiene rama seed (no hay dónde persistir).
+
+export type LibroDatos = Omit<Libro, 'id'>;
+
+function requiereDb() {
+  if (!db) throw new Error('El panel de administración requiere Firebase configurado.');
+  return db;
+}
+
+// Todos los libros, incluidos los inactivos (el catálogo público filtra activo).
+export async function obtenerLibrosAdmin(): Promise<Libro[]> {
+  const snap = await getDocs(query(collection(requiereDb(), 'libros'), orderBy('titulo')));
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() })) as Libro[];
+}
+
+export async function crearLibro(datos: LibroDatos): Promise<string> {
+  const ref = await addDoc(collection(requiereDb(), 'libros'), {
+    ...datos,
+    creado_en: serverTimestamp(),
+  });
+  return ref.id;
+}
+
+export async function actualizarLibro(id: string, datos: Partial<LibroDatos>): Promise<void> {
+  await updateDoc(doc(requiereDb(), 'libros', id), { ...datos });
+}
+
+export async function eliminarLibro(id: string): Promise<void> {
+  await deleteDoc(doc(requiereDb(), 'libros', id));
 }
