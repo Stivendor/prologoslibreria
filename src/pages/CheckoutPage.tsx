@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { formatearPrecio } from '../lib/format';
 import { urlWhatsApp } from '../config';
+import { crearPedido } from '../data/pedidos';
 
 // Checkout del MVP.
 // El pago en línea (Wompi/ePayco) y el correo de confirmación (Resend) se
@@ -10,7 +11,7 @@ import { urlWhatsApp } from '../config';
 // credenciales de la pasarela (RNF-03). Mientras tanto, el formulario recoge los
 // datos del pedido y permite confirmarlo por WhatsApp sin perder ventas.
 export function CheckoutPage() {
-  const { items, totalPrecio } = useCart();
+  const { items, totalPrecio, vaciar } = useCart();
   const [datos, setDatos] = useState({
     nombre: '',
     email: '',
@@ -18,6 +19,25 @@ export function CheckoutPage() {
     ciudad: '',
     direccion: '',
   });
+  const [enviando, setEnviando] = useState(false);
+  const [numeroEnviado, setNumeroEnviado] = useState<string | null>(null);
+
+  if (numeroEnviado !== null) {
+    return (
+      <div className="container section empty-state">
+        <h1>¡Pedido enviado!</h1>
+        <p>
+          {numeroEnviado
+            ? `Tu pedido ${numeroEnviado} quedó registrado.`
+            : 'Tu pedido quedó registrado.'}{' '}
+          Te atenderemos por WhatsApp para coordinar el pago y el envío.
+        </p>
+        <Link to="/catalogo" className="btn btn--lg">
+          Seguir explorando
+        </Link>
+      </div>
+    );
+  }
 
   if (items.length === 0) {
     return (
@@ -33,8 +53,7 @@ export function CheckoutPage() {
   const set = (campo: keyof typeof datos) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setDatos((d) => ({ ...d, [campo]: e.target.value }));
 
-  const mensaje =
-    `Hola Prólogos 👋, confirmo este pedido:\n\n` +
+  const cuerpoMensaje =
     items
       .map((i) => `• ${i.cantidad} × ${i.libro.titulo} (${formatearPrecio(i.libro.precio)})`)
       .join('\n') +
@@ -44,6 +63,35 @@ export function CheckoutPage() {
   const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(datos.email);
   const formularioCompleto =
     datos.nombre && emailValido && datos.telefono && datos.ciudad && datos.direccion;
+
+  async function confirmarPedido() {
+    if (!formularioCompleto || enviando) return;
+    setEnviando(true);
+    // El registro en Firestore alimenta el panel; si falla, la venta sigue
+    // por WhatsApp sin bloquearse.
+    let numero: string | null = null;
+    try {
+      numero = await crearPedido({
+        items: items.map((i) => ({
+          libro_id: i.libro.id,
+          titulo: i.libro.titulo,
+          precio: i.libro.precio,
+          cantidad: i.cantidad,
+        })),
+        total: totalPrecio,
+        cliente: { ...datos },
+      });
+    } catch (err) {
+      console.error('No se pudo registrar el pedido en Firestore', err);
+    }
+    const encabezado = numero
+      ? `Hola Prólogos 👋, confirmo el pedido ${numero}:\n\n`
+      : 'Hola Prólogos 👋, confirmo este pedido:\n\n';
+    window.open(urlWhatsApp(encabezado + cuerpoMensaje), '_blank', 'noopener');
+    vaciar();
+    setNumeroEnviado(numero ?? '');
+    setEnviando(false);
+  }
 
   return (
     <div className="container section">
@@ -87,15 +135,14 @@ export function CheckoutPage() {
             coordinar el pago.
           </div>
 
-          <a
+          <button
+            type="button"
             className={`btn btn--lg btn--block ${!formularioCompleto ? 'btn--disabled' : ''}`}
-            href={formularioCompleto ? urlWhatsApp(mensaje) : undefined}
-            target="_blank"
-            rel="noreferrer"
-            aria-disabled={!formularioCompleto}
+            onClick={confirmarPedido}
+            disabled={!formularioCompleto || enviando}
           >
-            Confirmar pedido por WhatsApp
-          </a>
+            {enviando ? 'Registrando pedido…' : 'Confirmar pedido por WhatsApp'}
+          </button>
         </form>
 
         <aside className="cart-summary">
