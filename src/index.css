@@ -918,6 +918,341 @@ img {
   text-decoration: none;
 }
 
+/* ==========================================================================
+   Panel de administración
+   ========================================================================== */
+
+.btn--sec {
+  background: var(--color-blanco);
+  color: var(--color-tinta);
+  border: 1px solid var(--color-borde);
+}
+
+.btn--sec:hover {
+  border-color: var(--color-vino);
+}
+
+/* Login */
+.admin-login {
+  display: flex;
+  justify-content: center;
+}
+
+.admin-login__card {
+  width: 100%;
+  max-width: 380px;
+  background: var(--color-blanco);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  box-shadow: var(--sombra);
+  padding: 2.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  text-align: center;
+}
+
+.admin-login__card img {
+  margin: 0 auto;
+}
+
+.admin-login__card h1 {
+  font-size: 1.4rem;
+  margin: 0;
+}
+
+.admin-login__sub {
+  color: var(--color-tinta-suave);
+  font-size: 0.9rem;
+  margin: 0 0 0.5rem;
+}
+
+.admin-login__card label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+.admin-login__card input {
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-sm);
+  font: inherit;
+}
+
+/* Cabecera y pestañas */
+.admin__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.2rem;
+}
+
+.admin__user {
+  color: var(--color-tinta-suave);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.admin__tabs {
+  display: flex;
+  gap: 0.4rem;
+  border-bottom: 1px solid var(--color-borde);
+  margin-bottom: 1.4rem;
+}
+
+.admin__tabs button {
+  font: inherit;
+  font-family: var(--fuente-titulo);
+  font-size: 1.05rem;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  color: var(--color-tinta-suave);
+}
+
+.admin__tabs button.is-active {
+  color: var(--color-vino-osc);
+  border-bottom-color: var(--color-vino-osc);
+}
+
+/* Filtros de pedidos */
+.admin-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 1.2rem;
+}
+
+.admin-filtros button {
+  font: inherit;
+  font-size: 0.85rem;
+  background: var(--color-blanco);
+  border: 1px solid var(--color-borde);
+  border-radius: 999px;
+  padding: 0.35rem 0.85rem;
+  cursor: pointer;
+  color: var(--color-tinta-suave);
+}
+
+.admin-filtros button.is-active {
+  background: var(--color-vino);
+  border-color: var(--color-vino);
+  color: var(--color-blanco);
+}
+
+.admin-vacio {
+  color: var(--color-tinta-suave);
+  padding: 2rem 0;
+  text-align: center;
+}
+
+/* Tarjetas de pedido */
+.pedido-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.pedido-card {
+  background: var(--color-blanco);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+}
+
+.pedido-card__head {
+  font: inherit;
+  width: 100%;
+  display: grid;
+  grid-template-columns: auto 1fr auto auto auto;
+  align-items: center;
+  gap: 1rem;
+  background: none;
+  border: none;
+  padding: 0.85rem 1.1rem;
+  cursor: pointer;
+  text-align: left;
+}
+
+.pedido-card__numero {
+  font-family: var(--fuente-titulo);
+  font-weight: 700;
+}
+
+.pedido-card__detalle {
+  border-top: 1px solid var(--color-borde);
+  padding: 1rem 1.1rem;
+  font-size: 0.92rem;
+}
+
+.pedido-card__detalle ul {
+  margin: 0 0 0.8rem;
+  padding-left: 1.1rem;
+}
+
+.pedido-card__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.8rem;
+}
+
+/* Estados de pedido — paleta monocroma con el vino de acento */
+.estado {
+  font-size: 0.78rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid var(--color-borde);
+  color: var(--color-tinta-suave);
+  white-space: nowrap;
+}
+
+.estado--nuevo {
+  background: var(--color-vino);
+  border-color: var(--color-vino);
+  color: var(--color-blanco);
+}
+
+.estado--confirmado {
+  border-color: var(--color-vino);
+  color: var(--color-vino);
+}
+
+.estado--enviado {
+  background: var(--color-crema-2);
+}
+
+.estado--entregado {
+  color: var(--color-oro);
+}
+
+.estado--cancelado {
+  text-decoration: line-through;
+}
+
+/* Tabla de libros */
+.admin-tabla__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.admin-tabla__head p {
+  color: var(--color-tinta-suave);
+  margin: 0;
+}
+
+.admin-tabla__scroll {
+  overflow-x: auto;
+}
+
+.admin-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--color-blanco);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  font-size: 0.92rem;
+}
+
+.admin-tabla th,
+.admin-tabla td {
+  text-align: left;
+  padding: 0.65rem 0.9rem;
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.admin-tabla th {
+  font-family: var(--fuente-titulo);
+  font-size: 0.85rem;
+  color: var(--color-tinta-suave);
+}
+
+.admin-badge {
+  font-size: 0.78rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  background: var(--color-vino);
+  color: var(--color-blanco);
+  white-space: nowrap;
+}
+
+.admin-badge--off {
+  background: var(--color-crema-2);
+  color: var(--color-tinta-suave);
+}
+
+.admin-tabla__acciones {
+  white-space: nowrap;
+}
+
+.admin-tabla__acciones button {
+  font: inherit;
+  font-size: 0.82rem;
+  background: none;
+  border: none;
+  color: var(--color-vino);
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0.15rem 0.35rem;
+}
+
+/* Formulario de libro */
+.admin-form {
+  max-width: 640px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.admin-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.9rem;
+  flex: 1;
+}
+
+.admin-form input,
+.admin-form select,
+.admin-form textarea {
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-sm);
+  font: inherit;
+}
+
+.admin-form__row {
+  display: flex;
+  gap: 0.9rem;
+}
+
+.admin-form__checks {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.admin-form__checks label {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.admin-form__acciones {
+  display: flex;
+  gap: 0.6rem;
+}
+
 /* ---------- Responsive ---------- */
 @media (max-width: 980px) {
   .promo__inner {
@@ -969,6 +1304,16 @@ img {
   }
   .site-footer__brand {
     grid-column: 1 / -1;
+  }
+  .admin-form__row {
+    flex-direction: column;
+  }
+  .pedido-card__head {
+    grid-template-columns: 1fr auto;
+    row-gap: 0.25rem;
+  }
+  .admin__head {
+    flex-direction: column;
   }
 }
 
