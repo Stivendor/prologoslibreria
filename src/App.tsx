@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { CartProvider } from './context/CartContext';
 import { AuthProvider } from './context/AuthContext';
 import { Header } from './components/Header';
@@ -11,31 +11,41 @@ import { CartPage } from './pages/CartPage';
 import { CheckoutPage } from './pages/CheckoutPage';
 import { AdminPage } from './pages/AdminPage';
 
+// El panel /admin no lleva el chrome de la tienda (header, footer, WhatsApp).
+function Contenido() {
+  const esAdmin = useLocation().pathname.startsWith('/admin');
+  return (
+    <>
+      {!esAdmin && <Header />}
+      <main className="site-main">
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/catalogo" element={<CatalogPage />} />
+          <Route path="/libro/:id" element={<BookDetailPage />} />
+          <Route path="/carrito" element={<CartPage />} />
+          <Route path="/checkout" element={<CheckoutPage />} />
+          <Route
+            path="/admin"
+            element={
+              <AuthProvider>
+                <AdminPage />
+              </AuthProvider>
+            }
+          />
+          <Route path="*" element={<HomePage />} />
+        </Routes>
+      </main>
+      {!esAdmin && <Footer />}
+      {!esAdmin && <WhatsAppButton />}
+    </>
+  );
+}
+
 export default function App() {
   return (
     <CartProvider>
       <BrowserRouter>
-        <Header />
-        <main className="site-main">
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/catalogo" element={<CatalogPage />} />
-            <Route path="/libro/:id" element={<BookDetailPage />} />
-            <Route path="/carrito" element={<CartPage />} />
-            <Route path="/checkout" element={<CheckoutPage />} />
-            <Route
-              path="/admin"
-              element={
-                <AuthProvider>
-                  <AdminPage />
-                </AuthProvider>
-              }
-            />
-            <Route path="*" element={<HomePage />} />
-          </Routes>
-        </main>
-        <Footer />
-        <WhatsAppButton />
+        <Contenido />
       </BrowserRouter>
     </CartProvider>
   );
