@@ -22,7 +22,8 @@ const SIGUIENTE: Partial<Record<EstadoPedido, EstadoPedido>> = {
 };
 
 function fecha(p: Pedido): string {
-  return p.creado_en
+  // Defensa en profundidad: solo se invoca toDate() si es realmente un Timestamp.
+  return typeof p.creado_en?.toDate === 'function'
     ? p.creado_en.toDate().toLocaleString('es-CO', { dateStyle: 'medium', timeStyle: 'short' })
     : '—';
 }

@@ -119,27 +119,27 @@ export function CheckoutPage() {
           <h2>Datos de contacto y envío</h2>
           <label>
             Nombre completo
-            <input value={datos.nombre} onChange={set('nombre')} required />
+            <input value={datos.nombre} onChange={set('nombre')} maxLength={120} required />
           </label>
           <label>
             Correo electrónico
-            <input type="email" value={datos.email} onChange={set('email')} required />
+            <input type="email" value={datos.email} onChange={set('email')} maxLength={120} required />
             {datos.email && !emailValido && (
               <span className="field-error">Ingresa un correo válido.</span>
             )}
           </label>
           <label>
             Teléfono / WhatsApp
-            <input value={datos.telefono} onChange={set('telefono')} required />
+            <input value={datos.telefono} onChange={set('telefono')} maxLength={30} required />
           </label>
           <div className="form-row">
             <label>
               Ciudad
-              <input value={datos.ciudad} onChange={set('ciudad')} required />
+              <input value={datos.ciudad} onChange={set('ciudad')} maxLength={80} required />
             </label>
             <label>
               Dirección
-              <input value={datos.direccion} onChange={set('direccion')} required />
+              <input value={datos.direccion} onChange={set('direccion')} maxLength={200} required />
             </label>
           </div>
 

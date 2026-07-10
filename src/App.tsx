@@ -13,7 +13,7 @@ import { AdminPage } from './pages/AdminPage';
 
 // El panel /admin no lleva el chrome de la tienda (header, footer, WhatsApp).
 function Contenido() {
-  const esAdmin = useLocation().pathname.startsWith('/admin');
+  const esAdmin = useLocation().pathname === '/admin';
   return (
     <>
       {!esAdmin && <Header />}
