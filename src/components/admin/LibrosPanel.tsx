@@ -9,11 +9,19 @@ import {
 import { formatearPrecio } from '../../lib/format';
 import { LibroForm } from './LibroForm';
 
+// Normaliza para buscar sin distinguir mayúsculas ni tildes.
+const normalizar = (s: string) =>
+  s
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '');
+
 export function LibrosPanel() {
   const [libros, setLibros] = useState<Libro[]>([]);
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [editando, setEditando] = useState<Libro | 'nuevo' | null>(null);
   const [cargando, setCargando] = useState(true);
+  const [busqueda, setBusqueda] = useState('');
   const [error, setError] = useState('');
 
   const cargar = useCallback(async () => {
@@ -70,12 +78,28 @@ export function LibrosPanel() {
 
   const nombreCategoria = (id: string) => categorias.find((c) => c.id === id)?.nombre ?? id;
 
+  const termino = normalizar(busqueda.trim());
+  const visibles = termino
+    ? libros.filter(
+        (l) => normalizar(l.titulo).includes(termino) || normalizar(l.autor).includes(termino)
+      )
+    : libros;
+
   return (
     <section>
       <div className="admin-tabla__head">
         <p>
-          {libros.length} libros ({libros.filter((l) => l.activo).length} visibles)
+          {termino
+            ? `${visibles.length} de ${libros.length} libros`
+            : `${libros.length} libros (${libros.filter((l) => l.activo).length} visibles)`}
         </p>
+        <input
+          type="search"
+          className="admin-buscar"
+          placeholder="Buscar por título o autor…"
+          value={busqueda}
+          onChange={(e) => setBusqueda(e.target.value)}
+        />
         <button className="btn" onClick={() => setEditando('nuevo')}>
           + Nuevo libro
         </button>
@@ -89,6 +113,7 @@ export function LibrosPanel() {
           <table className="admin-tabla">
             <thead>
               <tr>
+                <th>Libro ID</th>
                 <th>Título</th>
                 <th>Autor</th>
                 <th>Precio</th>
@@ -98,8 +123,9 @@ export function LibrosPanel() {
               </tr>
             </thead>
             <tbody>
-              {libros.map((libro) => (
+              {visibles.map((libro) => (
                 <tr key={libro.id}>
+                  <td className="admin-tabla__id">{libro.id}</td>
                   <td>{libro.titulo}</td>
                   <td>{libro.autor}</td>
                   <td>{formatearPrecio(libro.precio)}</td>
