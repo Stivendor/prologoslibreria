@@ -9,7 +9,7 @@ service cloud.firestore {
 
     // UID del usuario administrador (Firebase Auth → Users).
     function esAdmin() {
-      return request.auth != null && request.auth.uid == 'UID_ADMIN';
+      return request.auth != null && request.auth.uid == 'MLMKGU0Pvmex6W7gPCYqRS99KQ92';
     }
 
     // Valida el esquema de un pedido entrante para impedir abuso del

@@ -8,12 +8,12 @@ service firebase.storage {
       allow read: if true;
       // Crear/actualizar: solo el admin, imágenes de máximo 5 MB.
       allow create, update: if request.auth != null
-        && request.auth.uid == 'UID_ADMIN'
+        && request.auth.uid == 'MLMKGU0Pvmex6W7gPCYqRS99KQ92'
         && request.resource.size < 5 * 1024 * 1024
         && request.resource.contentType.matches('image/.*');
       // Borrar: solo el admin (request.resource es null en deletes).
       allow delete: if request.auth != null
-        && request.auth.uid == 'UID_ADMIN';
+        && request.auth.uid == 'MLMKGU0Pvmex6W7gPCYqRS99KQ92';
     }
   }
 }
