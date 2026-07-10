@@ -23,12 +23,8 @@ credenciales configuradas, la app funciona con los datos de ejemplo locales
 | imagen_url    | string / null |
 | categoria_id  | string (id de `categorias`) |
 | activo        | boolean |
-| destacado     | boolean |
-| calificacion  | number (opcional) |
-| resenas       | number (opcional) |
-| etiqueta      | string (opcional) |
-| precio_antes  | number (opcional) |
-| mas_vendido   | boolean (opcional) |
+| destacado     | boolean (curaduría — "Libros del mes") |
+| etiqueta      | string (opcional — p. ej. "Novedad", "Clásico") |
 | creado_en     | timestamp |
 
 ### `pedidos` (checkout — fase de pagos)

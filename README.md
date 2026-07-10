@@ -60,7 +60,7 @@ Con esas variables, la app consulta Firestore automáticamente en lugar de los d
 
 ```
 src/
-  components/   Header, Footer, BookCard, BookCover, StarRating, TrustBadges, ...
+  components/   Header, Footer, BookCard, BookCover, TrustBadges, WhatsAppButton, ...
   context/      CartContext (carrito con persistencia local)
   data/         seed.ts (datos de ejemplo) y catalogo.ts (acceso a datos)
   hooks/        useCatalogo
