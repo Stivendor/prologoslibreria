@@ -2,7 +2,6 @@ import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { formatearPrecio } from '../lib/format';
 import { BookCover } from '../components/BookCover';
-import { urlWhatsApp } from '../config';
 
 export function CartPage() {
   const { items, totalPrecio, cambiarCantidad, quitar, vaciar } = useCart();
@@ -18,13 +17,6 @@ export function CartPage() {
       </div>
     );
   }
-
-  const mensajePedido =
-    'Hola Prólogos 👋, quiero pedir:\n' +
-    items
-      .map((i) => `• ${i.cantidad} × ${i.libro.titulo} (${formatearPrecio(i.libro.precio)})`)
-      .join('\n') +
-    `\n\nTotal: ${formatearPrecio(totalPrecio)}`;
 
   return (
     <div className="container section">
@@ -79,14 +71,6 @@ export function CartPage() {
           <Link to="/checkout" className="btn btn--lg btn--block">
             Pagar en línea
           </Link>
-          <a
-            className="btn btn--ghost btn--block"
-            href={urlWhatsApp(mensajePedido)}
-            target="_blank"
-            rel="noreferrer"
-          >
-            Finalizar por WhatsApp
-          </a>
           <button className="link small" onClick={vaciar}>
             Vaciar carrito
           </button>
