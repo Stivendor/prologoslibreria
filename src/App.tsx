@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { CartProvider } from './context/CartContext';
+import { AuthProvider } from './context/AuthContext';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { WhatsAppButton } from './components/WhatsAppButton';
@@ -8,6 +9,7 @@ import { CatalogPage } from './pages/CatalogPage';
 import { BookDetailPage } from './pages/BookDetailPage';
 import { CartPage } from './pages/CartPage';
 import { CheckoutPage } from './pages/CheckoutPage';
+import { AdminPage } from './pages/AdminPage';
 
 export default function App() {
   return (
@@ -21,6 +23,14 @@ export default function App() {
             <Route path="/libro/:id" element={<BookDetailPage />} />
             <Route path="/carrito" element={<CartPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
+            <Route
+              path="/admin"
+              element={
+                <AuthProvider>
+                  <AdminPage />
+                </AuthProvider>
+              }
+            />
             <Route path="*" element={<HomePage />} />
           </Routes>
         </main>
