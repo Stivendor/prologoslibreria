@@ -15,6 +15,17 @@ dist-ssr
 # Firebase — claves privadas y entorno
 .env
 firebase/serviceAccount.json
+firebase/*serviceAccount*.json
+
+# Config personal de Claude Code (contiene rutas/permisos locales)
+.claude/settings.local.json
+
+# Documentos de negocio — no van al repo público
+propuesta-prologos-libreria.pdf
+
+# Exportes/volcados que podrían contener datos de clientes
+auth-users*.json
+*.export.json
 
 # Editor directories and files
 .vscode/*
