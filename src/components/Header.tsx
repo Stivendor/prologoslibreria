@@ -34,7 +34,12 @@ export function Header() {
             <circle cx="9" cy="20" r="1.4" fill="currentColor" />
             <circle cx="18" cy="20" r="1.4" fill="currentColor" />
           </svg>
-          {totalItems > 0 && <span className="cart-link__count">{totalItems}</span>}
+          {/* key re-monta el nodo al cambiar la cantidad y re-dispara badge-pop */}
+          {totalItems > 0 && (
+            <span key={totalItems} className="cart-link__count">
+              {totalItems}
+            </span>
+          )}
         </Link>
       </div>
     </header>

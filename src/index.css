@@ -20,6 +20,10 @@
   --fuente-titulo: Georgia, 'Times New Roman', serif;
   --fuente-texto: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 
+  /* Easings con carácter — las curvas nativas de CSS son demasiado suaves. */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+
   --radio: 10px;
   --radio-sm: 6px;
   --sombra: 0 6px 24px rgba(42, 33, 28, 0.08);
@@ -123,7 +127,7 @@ img {
   font-weight: 600;
   padding: 0.6rem 1.1rem;
   cursor: pointer;
-  transition: background 0.15s ease, transform 0.05s ease;
+  transition: background 0.15s ease, transform 0.16s var(--ease-out);
   text-decoration: none;
 }
 .btn:hover {
@@ -131,7 +135,7 @@ img {
   text-decoration: none;
 }
 .btn:active {
-  transform: translateY(1px);
+  transform: scale(0.97);
 }
 .btn--sm {
   padding: 0.4rem 0.8rem;
@@ -240,6 +244,20 @@ img {
   display: grid;
   place-items: center;
   padding: 0 4px;
+  /* Pop al cambiar la cantidad — Header remonta el nodo con key={totalItems}. */
+  animation: badge-pop 0.3s var(--ease-out);
+}
+
+@keyframes badge-pop {
+  0% {
+    transform: scale(0.7);
+  }
+  55% {
+    transform: scale(1.18);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 /* ---------- Etiquetas de sección (eyebrow) ---------- */
@@ -440,6 +458,12 @@ img {
 }
 .cat-tile__arrow {
   font-size: 1.2rem;
+  transition: translate 0.2s var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .cat-tile:hover .cat-tile__arrow {
+    translate: 4px 0;
+  }
 }
 
 /* ---------- Grid de libros ---------- */
@@ -459,8 +483,8 @@ img {
   /* estado oculto inicial; se revela al entrar en viewport (IntersectionObserver) */
   opacity: 0;
   translate: 0 12px;
-  transition: opacity 0.45s ease, translate 0.45s ease,
-    box-shadow 0.18s ease, transform 0.18s ease, border-color 0.18s ease;
+  transition: opacity 0.45s var(--ease-out), translate 0.45s var(--ease-out),
+    box-shadow 0.18s ease, transform 0.18s var(--ease-out), border-color 0.18s ease;
 }
 .book-card.is-visible {
   opacity: 1;
@@ -474,10 +498,13 @@ img {
     transition: box-shadow 0.18s ease, transform 0.18s ease, border-color 0.18s ease;
   }
 }
-.book-card:hover {
-  box-shadow: var(--sombra-alta);
-  transform: translateY(-3px);
-  border-color: #d4d4d4;
+/* Solo en dispositivos con puntero real: en táctiles el hover se queda "pegado". */
+@media (hover: hover) and (pointer: fine) {
+  .book-card:hover {
+    box-shadow: var(--sombra-alta);
+    transform: translateY(-3px);
+    border-color: #d4d4d4;
+  }
 }
 .book-card__cover {
   position: relative;
@@ -610,11 +637,15 @@ img {
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease,
+    transform 0.16s var(--ease-out);
 }
 .chip:hover {
   border-color: var(--color-vino);
   text-decoration: none;
+}
+.chip:active {
+  transform: scale(0.96);
 }
 .chip--active {
   background: var(--color-vino);
@@ -747,6 +778,19 @@ img {
   font-size: 1.1rem;
   cursor: pointer;
   color: var(--color-tinta);
+  transition: background 0.15s ease, transform 0.13s var(--ease-out);
+}
+.qty button:hover {
+  background: var(--color-borde);
+}
+.qty button:active {
+  transform: scale(0.92);
+}
+.qty button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  transform: none;
+  background: var(--color-crema-2);
 }
 .qty span {
   min-width: 34px;
@@ -922,11 +966,16 @@ img {
   place-items: center;
   box-shadow: var(--sombra-alta);
   z-index: 30;
-  transition: transform 0.15s ease;
+  transition: transform 0.18s var(--ease-out);
 }
-.whatsapp-fab:hover {
-  transform: scale(1.06);
-  text-decoration: none;
+@media (hover: hover) and (pointer: fine) {
+  .whatsapp-fab:hover {
+    transform: scale(1.06);
+    text-decoration: none;
+  }
+}
+.whatsapp-fab:active {
+  transform: scale(0.94);
 }
 
 /* ==========================================================================
@@ -1297,6 +1346,34 @@ img {
 .admin-form__acciones {
   display: flex;
   gap: 0.6rem;
+}
+
+/* ---------- Movimiento global ---------- */
+/* Entrada sutil al cambiar de ruta: el contenido de la página se remonta,
+   así que la animación corre una sola vez por navegación. */
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+.site-main > * {
+  animation: page-in 0.35s var(--ease-out) backwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-main > * {
+    animation: none;
+  }
+  .cart-link__count {
+    animation: none;
+  }
+  .btn:active,
+  .chip:active,
+  .qty button:active,
+  .whatsapp-fab:active {
+    transform: none;
+  }
 }
 
 /* ---------- Responsive ---------- */
