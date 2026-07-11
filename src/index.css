@@ -647,10 +647,21 @@ img {
   margin-top: 1.5rem;
 }
 .detail__cover {
-  aspect-ratio: 3 / 4;
   border-radius: var(--radio);
   overflow: hidden;
   box-shadow: var(--sombra);
+  align-self: start;
+}
+
+/* En el detalle la portada se muestra completa, con su proporción real;
+   el recorte 3:4 solo aplica a las tarjetas del catálogo. */
+.detail__cover .cover-img {
+  height: auto;
+  display: block;
+}
+
+.detail__cover .cover-placeholder {
+  aspect-ratio: 3 / 4;
 }
 .detail__author {
   font-size: 1.15rem;
