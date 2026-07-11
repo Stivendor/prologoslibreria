@@ -30,6 +30,27 @@ export function LibroForm({ libro, categorias, alTerminar, alCancelar }: Props) 
     (e: ChangeEvent<HTMLInputElement>) =>
       setDatos((d) => ({ ...d, [campo]: e.target.value }));
 
+  // Valida contra las reglas de Storage (imagen y < 5 MB) antes de subir,
+  // para dar un mensaje claro en vez del 403 genérico.
+  function elegirPortada(e: ChangeEvent<HTMLInputElement>) {
+    const archivo = e.target.files?.[0] ?? null;
+    setError('');
+    if (archivo && !archivo.type.startsWith('image/')) {
+      setError('El archivo no es una imagen. Usa JPG, PNG o WebP.');
+      e.target.value = '';
+      setPortada(null);
+      return;
+    }
+    if (archivo && archivo.size >= 5 * 1024 * 1024) {
+      const mb = (archivo.size / 1024 / 1024).toFixed(1);
+      setError(`La imagen pesa ${mb} MB y el máximo es 5 MB. Redúcela (p. ej. en squoosh.app) e inténtalo de nuevo.`);
+      e.target.value = '';
+      setPortada(null);
+      return;
+    }
+    setPortada(archivo);
+  }
+
   const valido =
     datos.titulo.trim() !== '' &&
     datos.autor.trim() !== '' &&
@@ -135,13 +156,7 @@ export function LibroForm({ libro, categorias, alTerminar, alCancelar }: Props) 
         </label>
         <label>
           Portada (imagen, máx. 5 MB)
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e: ChangeEvent<HTMLInputElement>) =>
-              setPortada(e.target.files?.[0] ?? null)
-            }
-          />
+          <input type="file" accept="image/*" onChange={elegirPortada} />
         </label>
       </div>
 
