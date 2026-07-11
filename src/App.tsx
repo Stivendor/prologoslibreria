@@ -1,3 +1,4 @@
+import { lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { CartProvider } from './context/CartContext';
 import { AuthProvider } from './context/AuthContext';
@@ -9,11 +10,27 @@ import { CatalogPage } from './pages/CatalogPage';
 import { BookDetailPage } from './pages/BookDetailPage';
 import { CartPage } from './pages/CartPage';
 import { CheckoutPage } from './pages/CheckoutPage';
-import { AdminPage } from './pages/AdminPage';
+
+// El panel es solo para el admin: no debe pesar en el bundle de la tienda.
+const AdminPage = lazy(() =>
+  import('./pages/AdminPage').then((m) => ({ default: m.AdminPage }))
+);
 
 // El panel /admin no lleva el chrome de la tienda (header, footer, WhatsApp).
 function Contenido() {
   const esAdmin = useLocation().pathname === '/admin';
+
+  // La animación page-in solo corre en navegaciones internas: en la carga
+  // inicial competiría con el parseo del bundle y se vería entrecortada.
+  // Doble rAF: garantiza que el atributo se ponga después del primer paint.
+  useEffect(() => {
+    const id = requestAnimationFrame(() =>
+      requestAnimationFrame(() => {
+        document.documentElement.setAttribute('data-cargada', '');
+      })
+    );
+    return () => cancelAnimationFrame(id);
+  }, []);
   return (
     <>
       {!esAdmin && <Header />}
@@ -28,7 +45,9 @@ function Contenido() {
             path="/admin"
             element={
               <AuthProvider>
-                <AdminPage />
+                <Suspense fallback={<div className="container section">Cargando…</div>}>
+                  <AdminPage />
+                </Suspense>
               </AuthProvider>
             }
           />
