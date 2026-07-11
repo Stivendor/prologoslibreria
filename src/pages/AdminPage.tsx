@@ -2,12 +2,13 @@ import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { usandoFirebase } from '../lib/firebase';
 import { LoginForm } from '../components/admin/LoginForm';
+import { ResumenPanel } from '../components/admin/ResumenPanel';
 import { PedidosPanel } from '../components/admin/PedidosPanel';
 import { LibrosPanel } from '../components/admin/LibrosPanel';
 
 export function AdminPage() {
   const { usuario, cargando, salir } = useAuth();
-  const [pestana, setPestana] = useState<'pedidos' | 'libros'>('pedidos');
+  const [pestana, setPestana] = useState<'resumen' | 'pedidos' | 'libros'>('resumen');
 
   if (!usandoFirebase) {
     return (
@@ -45,6 +46,12 @@ export function AdminPage() {
 
       <nav className="admin__tabs" aria-label="Secciones del panel">
         <button
+          className={pestana === 'resumen' ? 'is-active' : ''}
+          onClick={() => setPestana('resumen')}
+        >
+          Resumen
+        </button>
+        <button
           className={pestana === 'pedidos' ? 'is-active' : ''}
           onClick={() => setPestana('pedidos')}
         >
@@ -58,7 +65,9 @@ export function AdminPage() {
         </button>
       </nav>
 
-      {pestana === 'pedidos' ? <PedidosPanel /> : <LibrosPanel />}
+      {pestana === 'resumen' && <ResumenPanel />}
+      {pestana === 'pedidos' && <PedidosPanel />}
+      {pestana === 'libros' && <LibrosPanel />}
     </div>
   );
 }

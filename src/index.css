@@ -1081,6 +1081,91 @@ img {
   border-bottom-color: var(--color-vino-osc);
 }
 
+/* Resumen (dashboard) */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.9rem;
+  margin-bottom: 1.8rem;
+}
+
+.stat {
+  background: var(--color-blanco);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  padding: 1.1rem 1.2rem;
+}
+
+.stat__label {
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-tinta-suave);
+  margin: 0 0 0.35rem;
+}
+
+.stat__value {
+  font-family: var(--fuente-titulo);
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: var(--color-vino-osc);
+  margin: 0;
+  line-height: 1.1;
+}
+
+.stat__hint {
+  font-size: 0.8rem;
+  color: var(--color-tinta-suave);
+  margin: 0.3rem 0 0;
+}
+
+.stats-titulo {
+  font-size: 1.15rem;
+  margin: 0 0 0.8rem;
+}
+
+.top-libros {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background: var(--color-blanco);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  overflow: hidden;
+}
+
+.top-libros li {
+  display: flex;
+  align-items: baseline;
+  gap: 0.9rem;
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid var(--color-borde);
+  font-size: 0.95rem;
+}
+
+.top-libros li:last-child {
+  border-bottom: none;
+}
+
+.top-libros__pos {
+  font-family: var(--fuente-titulo);
+  font-weight: 700;
+  color: var(--color-tinta-suave);
+  min-width: 1.2em;
+}
+
+.top-libros__titulo {
+  flex: 1;
+  font-weight: 600;
+}
+
+.top-libros__datos {
+  color: var(--color-tinta-suave);
+  font-size: 0.88rem;
+  white-space: nowrap;
+}
+
 /* Filtros de pedidos */
 .admin-filtros {
   display: flex;
@@ -1350,19 +1435,21 @@ img {
 
 /* ---------- Movimiento global ---------- */
 /* Entrada sutil al cambiar de ruta: el contenido de la página se remonta,
-   así que la animación corre una sola vez por navegación. */
+   así que la animación corre una sola vez por navegación. Solo aplica tras
+   la carga inicial (html[data-cargada], lo pone App.tsx tras el primer
+   paint): al refrescar competiría con el parseo del bundle y perdería frames. */
 @keyframes page-in {
   from {
     opacity: 0;
     transform: translateY(8px);
   }
 }
-.site-main > * {
+html[data-cargada] .site-main > * {
   animation: page-in 0.35s var(--ease-out) backwards;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .site-main > * {
+  html[data-cargada] .site-main > * {
     animation: none;
   }
   .cart-link__count {
@@ -1390,6 +1477,9 @@ img {
     gap: 1.1rem;
   }
   .cats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .stats-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
@@ -1449,6 +1539,9 @@ img {
     grid-template-columns: 1fr;
   }
   .trust__grid {
+    grid-template-columns: 1fr;
+  }
+  .stats-grid {
     grid-template-columns: 1fr;
   }
 }
