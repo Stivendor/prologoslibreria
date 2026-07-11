@@ -4,12 +4,15 @@ import type { Libro } from '../types';
 import { obtenerLibro } from '../data/catalogo';
 import { formatearPrecio } from '../lib/format';
 import { useCart } from '../context/CartContext';
+import { useCatalogo } from '../hooks/useCatalogo';
 import { BookCover } from '../components/BookCover';
+import { BookCard } from '../components/BookCard';
 import { urlWhatsApp } from '../config';
 
 export function BookDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { agregar } = useCart();
+  const { libros } = useCatalogo();
   const [libro, setLibro] = useState<Libro | null>(null);
   const [cargando, setCargando] = useState(true);
   const [agregado, setAgregado] = useState(false);
@@ -17,6 +20,7 @@ export function BookDetailPage() {
   useEffect(() => {
     if (!id) return;
     setCargando(true);
+    window.scrollTo(0, 0);
     obtenerLibro(id)
       .then(setLibro)
       .finally(() => setCargando(false));
@@ -38,6 +42,14 @@ export function BookDetailPage() {
     setAgregado(true);
     setTimeout(() => setAgregado(false), 1800);
   };
+
+  // Misma categoría primero; si faltan, se completa con destacados y el resto.
+  const otros = libros.filter((l) => l.id !== libro.id);
+  const relacionados = [
+    ...otros.filter((l) => l.categoria_id === libro.categoria_id),
+    ...otros.filter((l) => l.categoria_id !== libro.categoria_id && l.destacado),
+    ...otros.filter((l) => l.categoria_id !== libro.categoria_id && !l.destacado),
+  ].slice(0, 4);
 
   return (
     <div className="container section">
@@ -71,6 +83,17 @@ export function BookDetailPage() {
           </div>
         </div>
       </div>
+
+      {relacionados.length > 0 && (
+        <section className="detail__related">
+          <h2>También te puede interesar</h2>
+          <div className="grid">
+            {relacionados.map((l) => (
+              <BookCard key={l.id} libro={l} />
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }

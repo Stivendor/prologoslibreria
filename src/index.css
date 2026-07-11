@@ -715,6 +715,13 @@ img {
   flex-wrap: wrap;
   gap: 0.8rem;
 }
+.detail__related {
+  margin-top: 4rem;
+}
+.detail__related h2 {
+  font-size: 1.4rem;
+  margin-bottom: 1.2rem;
+}
 
 /* ---------- Carrito ---------- */
 .cart-layout {
