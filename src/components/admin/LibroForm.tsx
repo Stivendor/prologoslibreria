@@ -160,6 +160,17 @@ export function LibroForm({ libro, categorias, alTerminar, alCancelar }: Props) 
         </label>
       </div>
 
+      {libro?.imagen_url && (
+        <div className="admin-form__portada">
+          <img src={libro.imagen_url} alt={`Portada actual de ${libro.titulo}`} />
+          <p>
+            {portada
+              ? `Se reemplazará por "${portada.name}" al guardar.`
+              : 'Portada actual. Elige un archivo solo si quieres reemplazarla.'}
+          </p>
+        </div>
+      )}
+
       <div className="admin-form__checks">
         <label>
           <input
