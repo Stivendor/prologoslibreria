@@ -11,6 +11,10 @@ import type { CartItem, Libro } from '../types';
 
 const STORAGE_KEY = 'prologos-carrito';
 
+/* Tope de unidades por libro: evita pedidos basura (39 copias del mismo título).
+   Un pedido mayorista real se gestiona por WhatsApp de todos modos. */
+export const MAX_POR_LIBRO = 10;
+
 interface CartContextValue {
   items: CartItem[];
   totalItems: number;
@@ -26,7 +30,12 @@ const CartContext = createContext<CartContextValue | null>(null);
 function cargarInicial(): CartItem[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as CartItem[]) : [];
+    if (!raw) return [];
+    // Sanea carritos guardados antes de existir el tope.
+    return (JSON.parse(raw) as CartItem[]).map((i) => ({
+      ...i,
+      cantidad: Math.min(i.cantidad, MAX_POR_LIBRO),
+    }));
   } catch {
     return [];
   }
@@ -45,11 +54,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
       if (existente) {
         return prev.map((i) =>
           i.libro.id === libro.id
-            ? { ...i, cantidad: i.cantidad + cantidad }
+            ? { ...i, cantidad: Math.min(i.cantidad + cantidad, MAX_POR_LIBRO) }
             : i,
         );
       }
-      return [...prev, { libro, cantidad }];
+      return [...prev, { libro, cantidad: Math.min(cantidad, MAX_POR_LIBRO) }];
     });
   }, []);
 
@@ -62,7 +71,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
       cantidad <= 0
         ? prev.filter((i) => i.libro.id !== libroId)
         : prev.map((i) =>
-            i.libro.id === libroId ? { ...i, cantidad } : i,
+            i.libro.id === libroId
+              ? { ...i, cantidad: Math.min(cantidad, MAX_POR_LIBRO) }
+              : i,
           ),
     );
   }, []);

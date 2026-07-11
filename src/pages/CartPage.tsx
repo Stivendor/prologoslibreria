@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { useCart } from '../context/CartContext';
+import { useCart, MAX_POR_LIBRO } from '../context/CartContext';
 import { formatearPrecio } from '../lib/format';
 import { BookCover } from '../components/BookCover';
 
@@ -47,6 +47,12 @@ export function CartPage() {
                   <span>{cantidad}</span>
                   <button
                     onClick={() => cambiarCantidad(libro.id, cantidad + 1)}
+                    disabled={cantidad >= MAX_POR_LIBRO}
+                    title={
+                      cantidad >= MAX_POR_LIBRO
+                        ? `Máximo ${MAX_POR_LIBRO} unidades por libro`
+                        : undefined
+                    }
                     aria-label="Aumentar cantidad"
                   >
                     +
