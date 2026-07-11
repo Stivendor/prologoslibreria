@@ -69,7 +69,7 @@ export function CartPage() {
           <p className="muted small">El envío se calcula al finalizar el pedido.</p>
 
           <Link to="/checkout" className="btn btn--lg btn--block">
-            Pagar en línea
+            Finalizar pedido
           </Link>
           <button className="link small" onClick={vaciar}>
             Vaciar carrito

@@ -144,9 +144,8 @@ export function CheckoutPage() {
           </div>
 
           <div className="notice">
-            El pago en línea (PSE, Nequi y tarjeta) se habilitará al integrar la
-            pasarela colombiana. Por ahora puedes confirmar tu pedido por WhatsApp y
-            coordinar el pago.
+            Al confirmar, tu pedido queda registrado y te atendemos por WhatsApp
+            para coordinar el pago y el envío.
           </div>
 
           <button

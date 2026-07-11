@@ -7,8 +7,8 @@ const BENEFICIOS = [
     ),
   },
   {
-    titulo: 'Pago 100% seguro',
-    texto: 'PSE, Nequi y tarjeta con pasarela protegida.',
+    titulo: 'Pago seguro y directo',
+    texto: 'Coordinamos tu pago sin intermediarios.',
     icono: <path d="M12 2l8 3v6c0 5-3.4 8.5-8 11-4.6-2.5-8-6-8-11V5z" />,
   },
   {
