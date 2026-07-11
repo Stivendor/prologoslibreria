@@ -653,6 +653,37 @@ img {
   border-color: var(--color-vino);
 }
 
+/* ---------- Paginación ---------- */
+.paginacion {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+.paginacion__btn {
+  border: 1px solid var(--color-borde);
+  background: var(--color-blanco);
+  color: var(--color-tinta);
+  border-radius: 999px;
+  padding: 0.45rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+.paginacion__btn:hover:not(:disabled) {
+  border-color: var(--color-vino);
+}
+.paginacion__btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.paginacion__info {
+  font-size: 0.9rem;
+  color: var(--color-tinta-suave);
+}
+
 .catalog-controls {
   margin-bottom: 1rem;
 }

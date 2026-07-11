@@ -1,12 +1,16 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useCatalogo } from '../hooks/useCatalogo';
 import { BookCard } from '../components/BookCard';
+import { Paginacion } from '../components/Paginacion';
+
+const LIBROS_POR_PAGINA = 10;
 
 export function CatalogPage() {
   const { libros, categorias, cargando, error } = useCatalogo();
   const [searchParams, setSearchParams] = useSearchParams();
   const [busqueda, setBusqueda] = useState('');
+  const [pagina, setPagina] = useState(1);
 
   const categoriaActiva = searchParams.get('categoria') ?? '';
 
@@ -29,6 +33,22 @@ export function CatalogPage() {
       return coincideCategoria && coincideBusqueda;
     });
   }, [libros, categorias, categoriaActiva, busqueda]);
+
+  // Volver a la primera página al cambiar filtros.
+  useEffect(() => {
+    setPagina(1);
+  }, [busqueda, categoriaActiva]);
+
+  const totalPaginas = Math.ceil(filtrados.length / LIBROS_POR_PAGINA);
+  const visibles = filtrados.slice(
+    (pagina - 1) * LIBROS_POR_PAGINA,
+    pagina * LIBROS_POR_PAGINA
+  );
+
+  const cambiarPagina = (p: number) => {
+    setPagina(p);
+    window.scrollTo({ top: 0 });
+  };
 
   return (
     <div className="container section">
@@ -73,10 +93,11 @@ export function CatalogPage() {
         <>
           <p className="muted small">{filtrados.length} libro(s)</p>
           <div className="grid">
-            {filtrados.map((libro) => (
+            {visibles.map((libro) => (
               <BookCard key={libro.id} libro={libro} />
             ))}
           </div>
+          <Paginacion pagina={pagina} totalPaginas={totalPaginas} alCambiar={cambiarPagina} />
         </>
       )}
     </div>

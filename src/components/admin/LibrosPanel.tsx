@@ -8,6 +8,9 @@ import {
 } from '../../data/catalogo';
 import { formatearPrecio } from '../../lib/format';
 import { LibroForm } from './LibroForm';
+import { Paginacion } from '../Paginacion';
+
+const LIBROS_POR_PAGINA = 15;
 
 // Normaliza para buscar sin distinguir mayúsculas ni tildes.
 const normalizar = (s: string) =>
@@ -22,6 +25,7 @@ export function LibrosPanel() {
   const [editando, setEditando] = useState<Libro | 'nuevo' | null>(null);
   const [cargando, setCargando] = useState(true);
   const [busqueda, setBusqueda] = useState('');
+  const [pagina, setPagina] = useState(1);
   const [error, setError] = useState('');
 
   const cargar = useCallback(async () => {
@@ -85,6 +89,14 @@ export function LibrosPanel() {
       )
     : libros;
 
+  const totalPaginas = Math.ceil(visibles.length / LIBROS_POR_PAGINA);
+  // Si la lista se encoge (borrado, búsqueda), no quedarse en una página vacía.
+  const paginaActual = Math.min(pagina, Math.max(totalPaginas, 1));
+  const enPagina = visibles.slice(
+    (paginaActual - 1) * LIBROS_POR_PAGINA,
+    paginaActual * LIBROS_POR_PAGINA
+  );
+
   return (
     <section>
       <div className="admin-tabla__head">
@@ -98,7 +110,10 @@ export function LibrosPanel() {
           className="admin-buscar"
           placeholder="Buscar por título o autor…"
           value={busqueda}
-          onChange={(e) => setBusqueda(e.target.value)}
+          onChange={(e) => {
+            setBusqueda(e.target.value);
+            setPagina(1);
+          }}
         />
         <button className="btn" onClick={() => setEditando('nuevo')}>
           + Nuevo libro
@@ -123,7 +138,7 @@ export function LibrosPanel() {
               </tr>
             </thead>
             <tbody>
-              {visibles.map((libro) => (
+              {enPagina.map((libro) => (
                 <tr key={libro.id}>
                   <td className="admin-tabla__id">{libro.id}</td>
                   <td>{libro.titulo}</td>
@@ -146,6 +161,7 @@ export function LibrosPanel() {
               ))}
             </tbody>
           </table>
+          <Paginacion pagina={paginaActual} totalPaginas={totalPaginas} alCambiar={setPagina} />
         </div>
       )}
     </section>
