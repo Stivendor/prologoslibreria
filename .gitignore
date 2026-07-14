@@ -39,3 +39,6 @@ auth-users*.json
 *.sw?
 .vercel
 .env*
+
+# Graphify — artefactos generados
+graphify-out/
