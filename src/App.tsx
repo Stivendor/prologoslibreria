@@ -5,6 +5,7 @@ import { AuthProvider } from './context/AuthContext';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { WhatsAppButton } from './components/WhatsAppButton';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { HomePage } from './pages/HomePage';
 import { CatalogPage } from './pages/CatalogPage';
 import { BookDetailPage } from './pages/BookDetailPage';
@@ -35,24 +36,26 @@ function Contenido() {
     <>
       {!esAdmin && <Header />}
       <main className="site-main">
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/catalogo" element={<CatalogPage />} />
-          <Route path="/libro/:id" element={<BookDetailPage />} />
-          <Route path="/carrito" element={<CartPage />} />
-          <Route path="/checkout" element={<CheckoutPage />} />
-          <Route
-            path="/admin"
-            element={
-              <AuthProvider>
-                <Suspense fallback={<div className="container section">Cargando…</div>}>
-                  <AdminPage />
-                </Suspense>
-              </AuthProvider>
-            }
-          />
-          <Route path="*" element={<HomePage />} />
-        </Routes>
+        <ErrorBoundary>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/catalogo" element={<CatalogPage />} />
+            <Route path="/libro/:id" element={<BookDetailPage />} />
+            <Route path="/carrito" element={<CartPage />} />
+            <Route path="/checkout" element={<CheckoutPage />} />
+            <Route
+              path="/admin"
+              element={
+                <AuthProvider>
+                  <Suspense fallback={<div className="container section">Cargando…</div>}>
+                    <AdminPage />
+                  </Suspense>
+                </AuthProvider>
+              }
+            />
+            <Route path="*" element={<HomePage />} />
+          </Routes>
+        </ErrorBoundary>
       </main>
       {!esAdmin && <Footer />}
       {!esAdmin && <WhatsAppButton />}
