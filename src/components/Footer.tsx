@@ -34,7 +34,7 @@ export function Footer() {
 
         <div className="site-footer__col">
           <p className="site-footer__heading">Pagos</p>
-          <span className="muted small">PSE · Nequi · Tarjeta</span>
+          <span className="muted small">Transferencia · Contraentrega</span>
           <span className="muted small">Compra 100% segura</span>
         </div>
       </div>

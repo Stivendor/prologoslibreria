@@ -45,7 +45,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>(cargarInicial);
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+    } catch {
+      // Private browsing / quota exceeded — cart stays in memory only.
+    }
   }, [items]);
 
   const agregar = useCallback((libro: Libro, cantidad = 1) => {

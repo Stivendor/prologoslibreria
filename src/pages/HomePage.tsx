@@ -21,8 +21,8 @@ export function HomePage() {
               Libros que <em>alimentan</em> el alma
             </h1>
             <p className="promo__text">
-              Un catálogo curado de libros y devocionales. Elige, paga en línea con PSE,
-              Nequi o tarjeta, y recíbelos en casa.
+              Un catálogo curado de libros y devocionales. Elige, confirma tu pedido
+              por WhatsApp y recíbelos en casa.
             </p>
             <div className="promo__actions">
               <Link to="/catalogo" className="btn btn--lg btn--invert">

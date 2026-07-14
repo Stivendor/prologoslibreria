@@ -18,6 +18,7 @@ export function CheckoutPage() {
     telefono: '',
     ciudad: '',
     direccion: '',
+    website: '',
   });
   const [enviando, setEnviando] = useState(false);
   const [numeroEnviado, setNumeroEnviado] = useState<string | null>(null);
@@ -70,6 +71,8 @@ export function CheckoutPage() {
 
   async function confirmarPedido() {
     if (!formularioCompleto || enviando) return;
+    // Honeypot: bots auto-fill hidden fields — silently discard.
+    if (datos.website) return;
     setEnviando(true);
     // La ventana se abre de forma síncrona, antes de cualquier await: los
     // navegadores (Safari sobre todo) bloquean popups que no nacen dentro del
@@ -140,6 +143,19 @@ export function CheckoutPage() {
             <label>
               Dirección
               <input value={datos.direccion} onChange={set('direccion')} maxLength={200} required />
+            </label>
+          </div>
+
+          {/* Honeypot — hidden from humans, bots auto-fill it. */}
+          <div aria-hidden="true" style={{ position: 'absolute', left: '-9999px', opacity: 0, height: 0 }}>
+            <label>
+              No Complete Este Campo
+              <input
+                tabIndex={-1}
+                autoComplete="off"
+                value={datos.website}
+                onChange={set('website')}
+              />
             </label>
           </div>
 
