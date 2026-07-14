@@ -1,0 +1,12 @@
+# Forzar LF en código fuente para evitar diffs fantasma entre Windows y Unix.
+* text=auto eol=lf
+
+# Binarios — no tocar.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.svg text eol=lf
+*.woff binary
+*.woff2 binary
