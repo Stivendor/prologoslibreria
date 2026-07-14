@@ -12,6 +12,40 @@ service cloud.firestore {
       return request.auth != null && request.auth.uid == 'MLMKGU0Pvmex6W7gPCYqRS99KQ92';
     }
 
+    // Un ítem del pedido: solo las claves esperadas, con tipos y rangos sanos.
+    // cantidad <= 10 refleja MAX_POR_LIBRO del carrito.
+    function itemValido(it) {
+      return it is map
+        && it.keys().hasOnly(['libro_id', 'titulo', 'precio', 'cantidad'])
+        && it.libro_id is string && it.libro_id.size() > 0 && it.libro_id.size() <= 60
+        && it.titulo is string && it.titulo.size() > 0 && it.titulo.size() <= 200
+        && it.precio is number && it.precio > 0 && it.precio <= 5000000
+        && it.cantidad is int && it.cantidad >= 1 && it.cantidad <= 10;
+    }
+
+    // Las reglas no pueden iterar listas ni recursar: se valida y suma por
+    // índice explícito hasta el tope de 20 ítems.
+    function itemOk(items, i) {
+      return i >= items.size() || itemValido(items[i]);
+    }
+    function itemsValidos(items) {
+      return itemOk(items, 0) && itemOk(items, 1) && itemOk(items, 2) && itemOk(items, 3)
+        && itemOk(items, 4) && itemOk(items, 5) && itemOk(items, 6) && itemOk(items, 7)
+        && itemOk(items, 8) && itemOk(items, 9) && itemOk(items, 10) && itemOk(items, 11)
+        && itemOk(items, 12) && itemOk(items, 13) && itemOk(items, 14) && itemOk(items, 15)
+        && itemOk(items, 16) && itemOk(items, 17) && itemOk(items, 18) && itemOk(items, 19);
+    }
+    function subtotal(items, i) {
+      return i < items.size() ? items[i].precio * items[i].cantidad : 0;
+    }
+    function sumaItems(items) {
+      return subtotal(items, 0) + subtotal(items, 1) + subtotal(items, 2) + subtotal(items, 3)
+        + subtotal(items, 4) + subtotal(items, 5) + subtotal(items, 6) + subtotal(items, 7)
+        + subtotal(items, 8) + subtotal(items, 9) + subtotal(items, 10) + subtotal(items, 11)
+        + subtotal(items, 12) + subtotal(items, 13) + subtotal(items, 14) + subtotal(items, 15)
+        + subtotal(items, 16) + subtotal(items, 17) + subtotal(items, 18) + subtotal(items, 19);
+    }
+
     // Valida el esquema de un pedido entrante para impedir abuso del
     // create público: solo los campos esperados, con tipos y tamaños acotados.
     function pedidoValido() {
@@ -20,9 +54,11 @@ service cloud.firestore {
         && d.estado == 'nuevo'
         // Formato exacto del número generado por el checkout (P-YYYYMMDD-XXXX).
         && d.numero is string && d.numero.matches('P-[0-9]{8}-[A-Z0-9]{4}')
-        // Tope de 50 millones COP: muy por encima de cualquier pedido real.
-        && d.total is number && d.total > 0 && d.total <= 50000000
-        && d.items is list && d.items.size() > 0 && d.items.size() <= 50
+        && d.items is list && d.items.size() > 0 && d.items.size() <= 20
+        && itemsValidos(d.items)
+        // El total debe ser exactamente la suma de los ítems, con tope de
+        // 50 millones COP: muy por encima de cualquier pedido real.
+        && d.total is number && d.total == sumaItems(d.items) && d.total <= 50000000
         && d.cliente is map
         && d.cliente.keys().hasOnly(['nombre', 'telefono', 'email', 'ciudad', 'direccion'])
         && d.cliente.nombre is string && d.cliente.nombre.size() > 0 && d.cliente.nombre.size() <= 120
