@@ -84,9 +84,18 @@ export function PedidosPanel() {
     );
   }
 
+  const pedidoAbierto = pedidos.find((p) => p.id === abierto) ?? null;
+  const totalActivo = pedidos
+    .filter((p) => p.estado !== 'cancelado')
+    .reduce((n, p) => n + p.total, 0);
+
   return (
     <section>
       <div className="pedidos__toolbar">
+        <p className="pedidos__resumen">
+          {pedidos.length} pedido{pedidos.length === 1 ? '' : 's'} ·{' '}
+          <strong>{formatearPrecio(totalActivo)}</strong> sin contar cancelados
+        </p>
         <button className="btn" onClick={() => setCreando(true)}>
           + Nuevo pedido
         </button>
@@ -112,6 +121,9 @@ export function PedidosPanel() {
                 <h3>{col.titulo}</h3>
                 <span className="kanban__count">{delEstado.length}</span>
               </header>
+              <p className="kanban__col-total">
+                {formatearPrecio(delEstado.reduce((n, p) => n + p.total, 0))}
+              </p>
               <div className="kanban__cards">
                 {delEstado.map((p) => (
                   <article
@@ -119,7 +131,7 @@ export function PedidosPanel() {
                     className="kanban__card"
                     draggable
                     onDragStart={(e) => e.dataTransfer.setData('text/plain', p.id)}
-                    onClick={() => setAbierto(abierto === p.id ? null : p.id)}
+                    onClick={() => setAbierto(p.id)}
                   >
                     <div className="kanban__card-top">
                       <strong>{p.numero}</strong>
@@ -130,34 +142,7 @@ export function PedidosPanel() {
                       {p.items.reduce((n, it) => n + it.cantidad, 0)} libro(s) · {fecha(p)}
                     </p>
 
-                    {abierto === p.id && (
-                      <div className="kanban__detalle" onClick={(e) => e.stopPropagation()}>
-                        <ul>
-                          {p.items.map((item) => (
-                            <li key={item.libro_id}>
-                              {item.cantidad} × {item.titulo} —{' '}
-                              {formatearPrecio(item.precio * item.cantidad)}
-                            </li>
-                          ))}
-                        </ul>
-                        <p>
-                          {p.cliente.telefono} · {p.cliente.email}
-                          <br />
-                          {p.cliente.ciudad} — {p.cliente.direccion}
-                        </p>
-                        <a
-                          className="btn btn--sec"
-                          href={urlWhatsAppCliente(p.cliente.telefono)}
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          WhatsApp al cliente
-                        </a>
-                      </div>
-                    )}
-
                     <div className="kanban__card-foot">
-                      <span>{abierto === p.id ? 'Cerrar' : 'Ver detalle'}</span>
                       <select
                         value={p.estado}
                         onClick={(e) => e.stopPropagation()}
@@ -178,6 +163,69 @@ export function PedidosPanel() {
           );
         })}
       </div>
+
+      {pedidoAbierto && (
+        <>
+          <div className="modal__overlay" onClick={() => setAbierto(null)} aria-hidden="true" />
+          <div className="modal" role="dialog" aria-label={`Pedido ${pedidoAbierto.numero}`}>
+            <div className="pedido-detalle__head">
+              <h2>
+                {pedidoAbierto.numero}{' '}
+                <span className="pedido-detalle__fecha">{fecha(pedidoAbierto)}</span>
+              </h2>
+              <select
+                value={pedidoAbierto.estado}
+                onChange={(e) =>
+                  void cambiarEstado(pedidoAbierto, e.target.value as EstadoPedido)
+                }
+                aria-label="Estado del pedido"
+              >
+                {COLUMNAS.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {ETIQUETAS[c.id]}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <ul className="pedido-detalle__items">
+              {pedidoAbierto.items.map((item) => (
+                <li key={item.libro_id}>
+                  {item.cantidad} × {item.titulo} —{' '}
+                  {formatearPrecio(item.precio * item.cantidad)}
+                </li>
+              ))}
+            </ul>
+            <p className="pedido-form__total">
+              Total: <strong>{formatearPrecio(pedidoAbierto.total)}</strong>
+            </p>
+
+            <p className="pedido-detalle__cliente">
+              <strong>{pedidoAbierto.cliente.nombre}</strong>
+              <br />
+              {pedidoAbierto.cliente.telefono}
+              {pedidoAbierto.cliente.email && <> · {pedidoAbierto.cliente.email}</>}
+              <br />
+              {pedidoAbierto.cliente.ciudad}
+              {pedidoAbierto.cliente.direccion && <> — {pedidoAbierto.cliente.direccion}</>}
+            </p>
+
+            <div className="admin-form__acciones">
+              <a
+                className="btn"
+                href={urlWhatsAppCliente(pedidoAbierto.cliente.telefono)}
+                target="_blank"
+                rel="noreferrer"
+              >
+                WhatsApp al cliente
+              </a>
+              <button className="btn btn--sec" onClick={() => setAbierto(null)}>
+                Cerrar
+              </button>
+            </div>
+          </div>
+        </>
+      )}
 
       {modal}
     </section>
