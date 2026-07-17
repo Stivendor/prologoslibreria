@@ -78,6 +78,11 @@ export async function enviarMensaje(telefono: string, texto: string): Promise<vo
     body: JSON.stringify({ telefono, texto }),
   });
   if (!respuesta.ok) {
+    // Sin backend desplegado (404) o sin Cloud API configurada (500): mensaje
+    // amable en vez del error crudo — estado esperado hasta conectar el número.
+    if (respuesta.status === 404 || respuesta.status === 500) {
+      throw new Error('El envío estará disponible al conectar el número de WhatsApp.');
+    }
     const datos = (await respuesta.json().catch(() => ({}))) as { error?: string };
     throw new Error(datos.error ?? 'No se pudo enviar el mensaje.');
   }
