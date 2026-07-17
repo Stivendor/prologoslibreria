@@ -83,5 +83,22 @@ service cloud.firestore {
       allow create: if pedidoValido();
       allow read, update, delete: if esAdmin();
     }
+
+    // Leads de WhatsApp (CRM). Los mensajes entrantes/salientes los escribe el
+    // servidor con el Admin SDK (salta estas reglas); desde el cliente el
+    // administrador solo lee y gestiona estado / no_leidos.
+    match /leads/{telefono} {
+      allow read: if esAdmin();
+      allow update: if esAdmin()
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['estado', 'no_leidos', 'actualizado_en'])
+        && request.resource.data.estado in ['nuevo', 'contactado', 'negociando', 'ganado', 'perdido'];
+      allow create, delete: if false;
+
+      match /mensajes/{id} {
+        allow read: if esAdmin();
+        allow write: if false;
+      }
+    }
   }
 }

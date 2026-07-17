@@ -1232,6 +1232,232 @@ img {
   padding: 1.6rem;
 }
 
+/* Kanban de leads (WhatsApp) */
+.kanban {
+  display: flex;
+  gap: 0.9rem;
+  align-items: flex-start;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+}
+
+.kanban__col {
+  flex: 0 0 250px;
+  background: #fff;
+  border: 1px solid var(--color-borde);
+  border-radius: 10px;
+  padding: 0.7rem;
+  transition: border-color 0.15s var(--ease-out), background 0.15s var(--ease-out);
+}
+
+.kanban__col.is-over {
+  border-color: var(--color-vino-osc);
+  background: var(--color-hueso, #f7f5f1);
+}
+
+.kanban__col-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.6rem;
+}
+
+.kanban__col-head h3 {
+  margin: 0;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-tinta-suave);
+}
+
+.kanban__count {
+  font-size: 0.8rem;
+  background: var(--color-hueso, #f0eee9);
+  border: 1px solid var(--color-borde);
+  border-radius: 99px;
+  padding: 0.05rem 0.5rem;
+}
+
+.kanban__cards {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-height: 2rem;
+}
+
+.kanban__card {
+  border: 1px solid var(--color-borde);
+  border-radius: 8px;
+  padding: 0.6rem 0.7rem;
+  cursor: pointer;
+  background: #fff;
+}
+
+.kanban__card:hover {
+  border-color: var(--color-vino-osc);
+}
+
+.kanban__card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.kanban__badge {
+  background: var(--color-vino-osc);
+  color: #fff;
+  font-size: 0.75rem;
+  border-radius: 99px;
+  padding: 0.05rem 0.45rem;
+}
+
+.kanban__tel {
+  margin: 0.1rem 0 0;
+  font-size: 0.8rem;
+  color: var(--color-tinta-suave);
+}
+
+.kanban__ultimo {
+  margin: 0.35rem 0 0;
+  font-size: 0.85rem;
+  color: var(--color-tinta-suave);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.kanban__card-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--color-tinta-suave);
+}
+
+.kanban__card-foot select {
+  font: inherit;
+  font-size: 0.75rem;
+  border: 1px solid var(--color-borde);
+  border-radius: 6px;
+  padding: 0.15rem 0.3rem;
+  background: #fff;
+}
+
+/* Drawer de conversación */
+.drawer__overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 80;
+  width: min(420px, 100vw);
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  box-shadow: -12px 0 40px rgba(0, 0, 0, 0.25);
+}
+
+.drawer__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.8rem;
+  padding: 1rem 1.2rem;
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.drawer__cerrar {
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  color: var(--color-tinta-suave);
+  padding: 0.2rem;
+}
+
+.drawer__mensajes {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  background: var(--color-hueso, #f7f5f1);
+}
+
+.burbuja {
+  max-width: 85%;
+  border-radius: 12px;
+  padding: 0.5rem 0.7rem;
+  font-size: 0.9rem;
+}
+
+.burbuja p {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.burbuja--entrante {
+  align-self: flex-start;
+  background: #fff;
+  border: 1px solid var(--color-borde);
+}
+
+.burbuja--saliente {
+  align-self: flex-end;
+  background: var(--color-vino-osc);
+  color: #fff;
+}
+
+.burbuja--error {
+  opacity: 0.6;
+  border: 1px dashed currentColor;
+}
+
+.burbuja__hora {
+  display: block;
+  font-size: 0.7rem;
+  opacity: 0.65;
+  margin-top: 0.2rem;
+  text-align: right;
+}
+
+.drawer__responder {
+  border-top: 1px solid var(--color-borde);
+  padding: 0.8rem 1.2rem;
+}
+
+.drawer__error {
+  margin: 0 0 0.5rem;
+  font-size: 0.85rem;
+  color: #b3261e;
+}
+
+.drawer__input-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.drawer__input-row input {
+  flex: 1;
+  font: inherit;
+  border: 1px solid var(--color-borde);
+  border-radius: 8px;
+  padding: 0.55rem 0.7rem;
+}
+
 /* Resumen (dashboard) */
 .stats-grid {
   display: grid;
