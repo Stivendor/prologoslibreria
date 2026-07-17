@@ -91,7 +91,7 @@ service cloud.firestore {
       allow read: if esAdmin();
       allow update: if esAdmin()
         && request.resource.data.diff(resource.data).affectedKeys()
-             .hasOnly(['estado', 'no_leidos', 'actualizado_en'])
+             .hasOnly(['estado', 'no_leidos', 'notas', 'actualizado_en'])
         && request.resource.data.estado in ['nuevo', 'contactado', 'negociando', 'ganado', 'perdido'];
       allow create, delete: if false;
 

@@ -59,6 +59,11 @@ export async function marcarLeido(id: string): Promise<void> {
   await updateDoc(doc(db, 'leads', id), { no_leidos: 0 });
 }
 
+export async function guardarNotas(id: string, notas: string): Promise<void> {
+  if (!db) throw new Error('El panel de administración requiere Firebase configurado.');
+  await updateDoc(doc(db, 'leads', id), { notas, actualizado_en: serverTimestamp() });
+}
+
 // Envía un mensaje de WhatsApp al lead vía la función del servidor.
 // Lanza Error con mensaje legible si algo falla.
 export async function enviarMensaje(telefono: string, texto: string): Promise<void> {

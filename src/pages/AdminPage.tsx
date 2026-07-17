@@ -5,7 +5,7 @@ import { LoginForm } from '../components/admin/LoginForm';
 import { ResumenPanel } from '../components/admin/ResumenPanel';
 import { PedidosPanel } from '../components/admin/PedidosPanel';
 import { LibrosPanel } from '../components/admin/LibrosPanel';
-import { LeadsKanban } from '../components/admin/LeadsKanban';
+import { LeadsInbox } from '../components/admin/LeadsInbox';
 
 type Pestana = 'resumen' | 'pedidos' | 'leads' | 'libros';
 
@@ -143,7 +143,7 @@ export function AdminPage() {
         <div className="admin__content">
           {pestana === 'resumen' && <ResumenPanel />}
           {pestana === 'pedidos' && <PedidosPanel />}
-          {pestana === 'leads' && <LeadsKanban />}
+          {pestana === 'leads' && <LeadsInbox />}
           {pestana === 'libros' && <LibrosPanel />}
         </div>
       </div>

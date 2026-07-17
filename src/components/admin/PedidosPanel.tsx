@@ -77,7 +77,7 @@ export function PedidosPanel() {
           return (
             <section
               key={col.id}
-              className={`kanban__col${sobreColumna === col.id ? ' is-over' : ''}`}
+              className={`kanban__col kanban__col--${col.id}${sobreColumna === col.id ? ' is-over' : ''}`}
               onDragOver={(e) => {
                 e.preventDefault();
                 setSobreColumna(col.id);

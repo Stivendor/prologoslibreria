@@ -69,6 +69,7 @@ export interface Lead {
   estado: EstadoLead;
   ultimo_mensaje_texto?: string;
   no_leidos?: number;
+  notas?: string;
   creado_en?: TimestampFirestore;
   actualizado_en?: TimestampFirestore;
   ultimo_mensaje_en?: TimestampFirestore;

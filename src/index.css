@@ -1230,19 +1230,33 @@ img {
 .admin__content {
   flex: 1;
   padding: 1.6rem;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Kanban de leads (WhatsApp) */
+/* El panel activo llena el alto disponible (los tableros Kanban llegan
+   hasta abajo); el contenido normal simplemente fluye. */
+.admin__content > * {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* Kanban (pedidos y leads) */
 .kanban {
+  flex: 1;
   display: flex;
   gap: 0.9rem;
-  align-items: flex-start;
+  align-items: stretch;
   overflow-x: auto;
   padding-bottom: 0.5rem;
 }
 
 .kanban__col {
   flex: 0 0 250px;
+  display: flex;
+  flex-direction: column;
   background: #fff;
   border: 1px solid var(--color-borde);
   border-radius: 10px;
@@ -1253,6 +1267,27 @@ img {
 .kanban__col.is-over {
   border-color: var(--color-vino-osc);
   background: var(--color-hueso, #f7f5f1);
+}
+
+/* Columna de cancelados: rojo tomate para marcar la zona destructiva */
+.kanban__col--cancelado {
+  border-color: #e5533d;
+  background: #fdf3f1;
+}
+
+.kanban__col--cancelado .kanban__col-head h3 {
+  color: #c93c28;
+}
+
+.kanban__col--cancelado .kanban__count {
+  background: #e5533d;
+  border-color: #e5533d;
+  color: #fff;
+}
+
+.kanban__col--cancelado.is-over {
+  border-color: #c93c28;
+  background: #fbe7e3;
 }
 
 .kanban__col-head {
@@ -1279,6 +1314,7 @@ img {
 }
 
 .kanban__cards {
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -1365,46 +1401,232 @@ img {
   background: #fff;
 }
 
-/* Drawer de conversación */
-.drawer__overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 70;
-  background: rgba(0, 0, 0, 0.45);
+/* Bandeja de leads (inbox de 3 paneles) */
+.inbox {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+  background: #fff;
+  border: 1px solid var(--color-borde);
+  border-radius: 10px;
+  overflow: hidden;
 }
 
-.drawer {
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 80;
-  width: min(420px, 100vw);
-  background: #fff;
+.inbox__lista {
+  flex: 0 0 300px;
   display: flex;
   flex-direction: column;
-  box-shadow: -12px 0 40px rgba(0, 0, 0, 0.25);
+  min-height: 0;
+  border-right: 1px solid var(--color-borde);
 }
 
-.drawer__head {
+.inbox__lista-head {
+  padding: 1rem 1rem 0.6rem;
+}
+
+.inbox__lista-head h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.inbox__total {
+  font-size: 0.8rem;
+  color: var(--color-tinta-suave);
+  font-weight: 400;
+  margin-left: 0.3rem;
+}
+
+.inbox__buscar {
+  padding: 0 1rem 0.6rem;
+}
+
+.inbox__buscar input {
+  width: 100%;
+  font: inherit;
+  font-size: 0.9rem;
+  border: 1px solid var(--color-borde);
+  border-radius: 8px;
+  padding: 0.5rem 0.7rem;
+  background: var(--color-hueso, #f7f5f1);
+}
+
+.inbox__filtros {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 0.8rem;
-  padding: 1rem 1.2rem;
+  gap: 0.4rem;
+  padding: 0 1rem 0.8rem;
   border-bottom: 1px solid var(--color-borde);
 }
 
-.drawer__cerrar {
+.inbox__filtros button {
+  font: inherit;
+  font-size: 0.82rem;
   background: none;
-  border: none;
-  font-size: 1.1rem;
+  border: 1px solid var(--color-borde);
+  border-radius: 99px;
+  padding: 0.25rem 0.7rem;
   cursor: pointer;
   color: var(--color-tinta-suave);
+}
+
+.inbox__filtros button.is-active {
+  background: var(--color-vino-osc);
+  border-color: var(--color-vino-osc);
+  color: #fff;
+}
+
+.inbox__items {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.inbox__item {
+  display: flex;
+  gap: 0.7rem;
+  width: 100%;
+  font: inherit;
+  text-align: left;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--color-borde);
+  border-left: 3px solid transparent;
+  padding: 0.8rem 1rem;
+  cursor: pointer;
+}
+
+.inbox__item:hover {
+  background: var(--color-hueso, #f7f5f1);
+}
+
+.inbox__item.is-active {
+  background: var(--color-hueso, #f7f5f1);
+  border-left-color: var(--color-vino-osc);
+}
+
+.inbox__avatar {
+  flex: 0 0 auto;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--color-vino-osc);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.inbox__avatar--grande {
+  width: 44px;
+  height: 44px;
+}
+
+.inbox__item-cuerpo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.inbox__item-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.inbox__item-top time {
+  font-size: 0.72rem;
+  color: var(--color-tinta-suave);
+  white-space: nowrap;
+}
+
+.inbox__item-preview {
+  font-size: 0.85rem;
+  color: var(--color-tinta-suave);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.inbox__item-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  color: var(--color-tinta-suave);
+}
+
+.inbox__punto {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-vino-osc);
+}
+
+.inbox__punto--ganado {
+  background: #2e7d32;
+}
+
+.inbox__punto--perdido {
+  background: #e5533d;
+}
+
+.inbox__punto--contactado,
+.inbox__punto--negociando {
+  background: var(--color-tinta-suave);
+}
+
+.inbox__badge {
+  margin-left: auto;
+  background: var(--color-vino-osc);
+  color: #fff;
+  font-size: 0.72rem;
+  border-radius: 99px;
+  padding: 0.05rem 0.45rem;
+}
+
+.inbox__chat {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.inbox__vacio {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-tinta-suave);
+}
+
+.inbox__chat-head {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.8rem 1.2rem;
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.inbox__volver {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: var(--color-tinta);
   padding: 0.2rem;
 }
 
-.drawer__mensajes {
+.inbox__sub {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--color-tinta-suave);
+}
+
+.inbox__mensajes {
   flex: 1;
   overflow-y: auto;
   padding: 1rem 1.2rem;
@@ -1412,6 +1634,94 @@ img {
   flex-direction: column;
   gap: 0.5rem;
   background: var(--color-hueso, #f7f5f1);
+}
+
+.inbox__responder {
+  border-top: 1px solid var(--color-borde);
+  padding: 0.8rem 1.2rem;
+}
+
+.inbox__detalles {
+  flex: 0 0 260px;
+  border-left: 1px solid var(--color-borde);
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+.inbox__detalles-titulo {
+  margin: 0 0 0.8rem;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-tinta-suave);
+}
+
+.inbox__contacto {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.inbox__seccion {
+  margin: 1rem 0 0.5rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-tinta-suave);
+}
+
+.inbox__etapas {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.inbox__etapa {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font: inherit;
+  font-size: 0.9rem;
+  text-align: left;
+  background: none;
+  border: none;
+  border-radius: 6px;
+  padding: 0.4rem 0.5rem;
+  cursor: pointer;
+  color: var(--color-tinta-suave);
+}
+
+.inbox__etapa:hover {
+  background: var(--color-hueso, #f7f5f1);
+}
+
+.inbox__etapa.is-active {
+  color: var(--color-tinta);
+  font-weight: 600;
+}
+
+.inbox__etapa .inbox__punto {
+  opacity: 0.35;
+}
+
+.inbox__etapa.is-active .inbox__punto {
+  opacity: 1;
+}
+
+.inbox__notas {
+  width: 100%;
+  font: inherit;
+  font-size: 0.9rem;
+  border: 1px solid var(--color-borde);
+  border-radius: 8px;
+  padding: 0.6rem 0.7rem;
+  resize: vertical;
+}
+
+.inbox__guardar {
+  margin-top: 0.5rem;
 }
 
 .burbuja {
@@ -1450,11 +1760,6 @@ img {
   opacity: 0.65;
   margin-top: 0.2rem;
   text-align: right;
-}
-
-.drawer__responder {
-  border-top: 1px solid var(--color-borde);
-  padding: 0.8rem 1.2rem;
 }
 
 .drawer__error {
@@ -1832,7 +2137,30 @@ html[data-cargada] .site-main > * {
   }
 }
 
+@media (max-width: 980px) {
+  .inbox__detalles {
+    display: none;
+  }
+}
+
 @media (max-width: 860px) {
+  /* Bandeja de leads: lista y chat se alternan a pantalla completa */
+  .inbox__lista {
+    flex: 1;
+  }
+  .inbox__chat {
+    display: none;
+  }
+  .inbox--abierto .inbox__lista {
+    display: none;
+  }
+  .inbox--abierto .inbox__chat {
+    display: flex;
+  }
+  .inbox__volver {
+    display: block;
+  }
+
   .admin__burger {
     display: block;
   }
