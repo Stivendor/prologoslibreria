@@ -3,6 +3,7 @@ import type { EstadoPedido, Pedido } from '../../types';
 import { actualizarEstadoPedido, suscribirsePedidos } from '../../data/pedidos';
 import { formatearPrecio } from '../../lib/format';
 import { urlWhatsAppCliente } from '../../config';
+import { PedidoForm } from './PedidoForm';
 
 // Tablero Kanban de pedidos: una columna por estado, drag-and-drop nativo
 // entre columnas con <select> como fallback accesible (mismo patrón que el
@@ -35,6 +36,7 @@ export function PedidosPanel() {
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
   const [abierto, setAbierto] = useState<string | null>(null);
   const [sobreColumna, setSobreColumna] = useState<EstadoPedido | null>(null);
+  const [creando, setCreando] = useState(false);
   const [error, setError] = useState('');
 
   // Suscripción en vivo: los pedidos nuevos aparecen sin recargar.
@@ -58,17 +60,32 @@ export function PedidosPanel() {
     if (pedido) void cambiarEstado(pedido, estado);
   }
 
+  if (creando) {
+    return <PedidoForm alTerminar={() => setCreando(false)} alCancelar={() => setCreando(false)} />;
+  }
+
   if (pedidos.length === 0) {
     return (
-      <p className="admin-vacio">
-        Aún no hay pedidos. Cuando un cliente confirme su compra aparecerá aquí al
-        instante.
-      </p>
+      <div className="admin-vacio">
+        <p>
+          Aún no hay pedidos. Cuando un cliente confirme su compra aparecerá aquí al
+          instante.
+        </p>
+        <button className="btn" onClick={() => setCreando(true)}>
+          + Nuevo pedido manual
+        </button>
+      </div>
     );
   }
 
   return (
     <section>
+      <div className="pedidos__toolbar">
+        <button className="btn" onClick={() => setCreando(true)}>
+          + Nuevo pedido
+        </button>
+      </div>
+
       {error && <p className="field-error">{error}</p>}
 
       <div className="kanban">

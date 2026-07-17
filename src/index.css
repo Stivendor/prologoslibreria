@@ -1243,6 +1243,35 @@ img {
   min-height: 0;
 }
 
+.pedidos__toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.8rem;
+}
+
+/* Alta manual de pedidos */
+.pedido-form__fila {
+  align-items: flex-end;
+}
+
+.pedido-form__fila select {
+  width: 100%;
+}
+
+.pedido-form__cantidad {
+  flex: 0 0 110px;
+}
+
+.pedido-form__quitar {
+  flex: 0 0 auto;
+  padding: 0.5rem 0.8rem;
+}
+
+.pedido-form__total {
+  font-size: 1.05rem;
+  margin: 0.8rem 0 0;
+}
+
 /* Kanban (pedidos y leads) */
 .kanban {
   flex: 1;
@@ -1405,6 +1434,8 @@ img {
 .inbox {
   flex: 1;
   display: flex;
+  /* .admin__content > * pone column; aquí los 3 paneles van en fila */
+  flex-direction: row;
   min-height: 0;
   background: #fff;
   border: 1px solid var(--color-borde);
