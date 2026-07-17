@@ -60,9 +60,14 @@ export function PedidosPanel() {
     if (pedido) void cambiarEstado(pedido, estado);
   }
 
-  if (creando) {
-    return <PedidoForm alTerminar={() => setCreando(false)} alCancelar={() => setCreando(false)} />;
-  }
+  const modal = creando && (
+    <>
+      <div className="modal__overlay" onClick={() => setCreando(false)} aria-hidden="true" />
+      <div className="modal" role="dialog" aria-label="Nuevo pedido manual">
+        <PedidoForm alTerminar={() => setCreando(false)} alCancelar={() => setCreando(false)} />
+      </div>
+    </>
+  );
 
   if (pedidos.length === 0) {
     return (
@@ -74,6 +79,7 @@ export function PedidosPanel() {
         <button className="btn" onClick={() => setCreando(true)}>
           + Nuevo pedido manual
         </button>
+        {modal}
       </div>
     );
   }
@@ -172,6 +178,8 @@ export function PedidosPanel() {
           );
         })}
       </div>
+
+      {modal}
     </section>
   );
 }
