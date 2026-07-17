@@ -61,8 +61,12 @@ export function LeadsInbox() {
   const noLeidas = leads.filter((l) => (l.no_leidos ?? 0) > 0).length;
   const lead = leads.find((l) => l.id === seleccionado) ?? null;
 
+  // Hoja de detalles en móvil (en desktop el panel siempre está visible).
+  const [verDetalles, setVerDetalles] = useState(false);
+
   function abrir(l: Lead) {
     setSeleccionado(l.id);
+    setVerDetalles(false);
     if (l.no_leidos) void marcarLeido(l.id);
   }
 
@@ -135,7 +139,11 @@ export function LeadsInbox() {
       {/* Chat */}
       <section className="inbox__chat">
         {lead ? (
-          <Conversacion lead={lead} onVolver={() => setSeleccionado(null)} />
+          <Conversacion
+            lead={lead}
+            onVolver={() => setSeleccionado(null)}
+            onDetalles={() => setVerDetalles(true)}
+          />
         ) : (
           <div className="inbox__vacio">
             <p>Selecciona una conversación para verla aquí.</p>
@@ -144,12 +152,22 @@ export function LeadsInbox() {
       </section>
 
       {/* Detalles */}
-      {lead && <Detalles lead={lead} />}
+      {lead && (
+        <Detalles lead={lead} abierto={verDetalles} onCerrar={() => setVerDetalles(false)} />
+      )}
     </div>
   );
 }
 
-function Conversacion({ lead, onVolver }: { lead: Lead; onVolver: () => void }) {
+function Conversacion({
+  lead,
+  onVolver,
+  onDetalles,
+}: {
+  lead: Lead;
+  onVolver: () => void;
+  onDetalles: () => void;
+}) {
   const [mensajes, setMensajes] = useState<MensajeLead[]>([]);
   const [texto, setTexto] = useState('');
   const [enviando, setEnviando] = useState(false);
@@ -189,6 +207,9 @@ function Conversacion({ lead, onVolver }: { lead: Lead; onVolver: () => void }) 
           <strong>{lead.nombre ?? lead.telefono}</strong>
           {lead.nombre && <p className="inbox__sub">{lead.telefono}</p>}
         </div>
+        <button className="inbox__info" onClick={onDetalles}>
+          Detalles
+        </button>
       </header>
 
       <div className="inbox__mensajes">
@@ -228,7 +249,15 @@ function Conversacion({ lead, onVolver }: { lead: Lead; onVolver: () => void }) 
   );
 }
 
-function Detalles({ lead }: { lead: Lead }) {
+function Detalles({
+  lead,
+  abierto,
+  onCerrar,
+}: {
+  lead: Lead;
+  abierto: boolean;
+  onCerrar: () => void;
+}) {
   const [notas, setNotas] = useState(lead.notas ?? '');
   const [guardando, setGuardando] = useState(false);
   const [guardado, setGuardado] = useState(false);
@@ -262,8 +291,17 @@ function Detalles({ lead }: { lead: Lead }) {
   }
 
   return (
-    <aside className="inbox__detalles">
-      <h3 className="inbox__detalles-titulo">Detalles</h3>
+    <>
+      {abierto && (
+        <div className="inbox__detalles-overlay" onClick={onCerrar} aria-hidden="true" />
+      )}
+      <aside className={`inbox__detalles${abierto ? ' is-open' : ''}`}>
+        <div className="inbox__detalles-head">
+          <h3 className="inbox__detalles-titulo">Detalles</h3>
+          <button className="inbox__detalles-cerrar" onClick={onCerrar} aria-label="Cerrar">
+            ✕
+          </button>
+        </div>
 
       <div className="inbox__contacto">
         <span className="inbox__avatar inbox__avatar--grande">{inicial(lead)}</span>
@@ -300,13 +338,14 @@ function Detalles({ lead }: { lead: Lead }) {
         }}
         rows={5}
       />
-      <button
-        className="btn btn--sec inbox__guardar"
-        onClick={() => void guardar()}
-        disabled={guardando || notas.trim() === (lead.notas ?? '')}
-      >
-        {guardando ? 'Guardando…' : guardado ? 'Guardado ✓' : 'Guardar notas'}
-      </button>
-    </aside>
+        <button
+          className="btn btn--sec inbox__guardar"
+          onClick={() => void guardar()}
+          disabled={guardando || notas.trim() === (lead.notas ?? '')}
+        >
+          {guardando ? 'Guardando…' : guardado ? 'Guardado ✓' : 'Guardar notas'}
+        </button>
+      </aside>
+    </>
   );
 }
