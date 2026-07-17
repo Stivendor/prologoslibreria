@@ -1328,6 +1328,24 @@ img {
   overflow: hidden;
 }
 
+.kanban__detalle {
+  border-top: 1px solid var(--color-borde);
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  font-size: 0.85rem;
+  cursor: default;
+}
+
+.kanban__detalle ul {
+  margin: 0 0 0.5rem;
+  padding-left: 1.1rem;
+}
+
+.kanban__detalle p {
+  margin: 0 0 0.6rem;
+  color: var(--color-tinta-suave);
+}
+
 .kanban__card-foot {
   display: flex;
   align-items: center;
@@ -1574,92 +1592,6 @@ img {
   text-align: center;
 }
 
-/* Tarjetas de pedido */
-.pedido-lista {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-}
-
-.pedido-card {
-  background: var(--color-blanco);
-  border: 1px solid var(--color-borde);
-  border-radius: var(--radio);
-}
-
-.pedido-card__head {
-  font: inherit;
-  width: 100%;
-  display: grid;
-  grid-template-columns: auto 1fr auto auto auto;
-  align-items: center;
-  gap: 1rem;
-  background: none;
-  border: none;
-  padding: 0.85rem 1.1rem;
-  cursor: pointer;
-  text-align: left;
-}
-
-.pedido-card__numero {
-  font-family: var(--fuente-titulo);
-  font-weight: 700;
-}
-
-.pedido-card__detalle {
-  border-top: 1px solid var(--color-borde);
-  padding: 1rem 1.1rem;
-  font-size: 0.92rem;
-}
-
-.pedido-card__detalle ul {
-  margin: 0 0 0.8rem;
-  padding-left: 1.1rem;
-}
-
-.pedido-card__acciones {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 0.8rem;
-}
-
-/* Estados de pedido — paleta monocroma con el vino de acento */
-.estado {
-  font-size: 0.78rem;
-  padding: 0.2rem 0.6rem;
-  border-radius: 999px;
-  border: 1px solid var(--color-borde);
-  color: var(--color-tinta-suave);
-  white-space: nowrap;
-}
-
-.estado--nuevo {
-  background: var(--color-vino);
-  border-color: var(--color-vino);
-  color: var(--color-blanco);
-}
-
-.estado--confirmado {
-  border-color: var(--color-vino);
-  color: var(--color-vino);
-}
-
-.estado--enviado {
-  background: var(--color-crema-2);
-}
-
-.estado--entregado {
-  color: var(--color-oro);
-}
-
-.estado--cancelado {
-  text-decoration: line-through;
-}
-
 /* Tabla de libros */
 .admin-tabla__head {
   display: flex;
@@ -1897,10 +1829,6 @@ html[data-cargada] .site-main > * {
   }
   .admin-form__row {
     flex-direction: column;
-  }
-  .pedido-card__head {
-    grid-template-columns: 1fr auto;
-    row-gap: 0.25rem;
   }
 }
 
