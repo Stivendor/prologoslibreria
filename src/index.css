@@ -1230,6 +1230,674 @@ img {
 .admin__content {
   flex: 1;
   padding: 1.6rem;
+  display: flex;
+  flex-direction: column;
+}
+
+/* El panel activo llena el alto disponible (los tableros Kanban llegan
+   hasta abajo); el contenido normal simplemente fluye. */
+.admin__content > * {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* Modal genérico del panel */
+.modal__overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 100;
+  width: min(640px, calc(100vw - 2rem));
+  max-height: calc(100vh - 3rem);
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.4rem;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.3);
+}
+
+.pedidos__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.8rem;
+}
+
+.pedidos__resumen {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--color-tinta-suave);
+}
+
+/* Detalle de pedido (modal) */
+.pedido-detalle__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.8rem;
+}
+
+.pedido-detalle__head h2 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.pedido-detalle__fecha {
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: var(--color-tinta-suave);
+}
+
+.pedido-detalle__head select {
+  font: inherit;
+  font-size: 0.9rem;
+  border: 1px solid var(--color-borde);
+  border-radius: 8px;
+  padding: 0.35rem 0.5rem;
+  background: #fff;
+}
+
+.pedido-detalle__items {
+  margin: 0 0 0.4rem;
+  padding-left: 1.1rem;
+}
+
+.pedido-detalle__cliente {
+  margin: 0.8rem 0 1rem;
+  color: var(--color-tinta-suave);
+}
+
+/* Alta manual de pedidos */
+.pedido-form__fila {
+  align-items: flex-end;
+}
+
+.pedido-form__fila select {
+  width: 100%;
+}
+
+.pedido-form__cantidad {
+  flex: 0 0 110px;
+}
+
+.pedido-form__quitar {
+  flex: 0 0 auto;
+  padding: 0.5rem 0.8rem;
+}
+
+.pedido-form__total {
+  font-size: 1.05rem;
+  margin: 0.8rem 0 0;
+}
+
+/* Kanban (pedidos y leads) */
+.kanban {
+  flex: 1;
+  display: flex;
+  gap: 0.9rem;
+  align-items: stretch;
+  overflow-x: auto;
+  padding-bottom: 0.8rem;
+}
+
+.kanban__col {
+  /* Crecen para llenar el ancho; nunca por debajo de 220px (scroll si no caben) */
+  flex: 1 0 220px;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border: 1px solid var(--color-borde);
+  border-radius: 10px;
+  padding: 0.7rem;
+  transition: border-color 0.15s var(--ease-out), background 0.15s var(--ease-out);
+}
+
+.kanban__col.is-over {
+  border-color: var(--color-vino-osc);
+  background: var(--color-hueso, #f7f5f1);
+}
+
+/* Columna de cancelados: rojo tomate para marcar la zona destructiva */
+.kanban__col--cancelado {
+  border-color: #e5533d;
+  background: #fdf3f1;
+}
+
+.kanban__col--cancelado .kanban__col-head h3 {
+  color: #c93c28;
+}
+
+.kanban__col--cancelado .kanban__count {
+  background: #e5533d;
+  border-color: #e5533d;
+  color: #fff;
+}
+
+.kanban__col--cancelado.is-over {
+  border-color: #c93c28;
+  background: #fbe7e3;
+}
+
+.kanban__col-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.6rem;
+}
+
+.kanban__col-head h3 {
+  margin: 0;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-tinta-suave);
+}
+
+.kanban__count {
+  font-size: 0.8rem;
+  background: var(--color-hueso, #f0eee9);
+  border: 1px solid var(--color-borde);
+  border-radius: 99px;
+  padding: 0.05rem 0.5rem;
+}
+
+.kanban__col-total {
+  margin: -0.3rem 0 0.6rem;
+  font-size: 0.78rem;
+  color: var(--color-tinta-suave);
+}
+
+.kanban__cards {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-height: 2rem;
+}
+
+/* Columna sin tarjetas: invitación tenue a soltar */
+.kanban__cards:empty {
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed var(--color-borde);
+  border-radius: 8px;
+}
+
+.kanban__cards:empty::before {
+  content: 'Arrastra pedidos aquí';
+  font-size: 0.8rem;
+  color: var(--color-tinta-suave);
+  opacity: 0.7;
+}
+
+.kanban__card {
+  border: 1px solid var(--color-borde);
+  border-radius: 8px;
+  padding: 0.6rem 0.7rem;
+  cursor: pointer;
+  background: #fff;
+}
+
+.kanban__card:hover {
+  border-color: var(--color-vino-osc);
+}
+
+.kanban__card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.kanban__badge {
+  background: var(--color-vino-osc);
+  color: #fff;
+  font-size: 0.75rem;
+  border-radius: 99px;
+  padding: 0.05rem 0.45rem;
+}
+
+.kanban__tel {
+  margin: 0.1rem 0 0;
+  font-size: 0.8rem;
+  color: var(--color-tinta-suave);
+}
+
+.kanban__ultimo {
+  margin: 0.35rem 0 0;
+  font-size: 0.85rem;
+  color: var(--color-tinta-suave);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.kanban__card-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--color-tinta-suave);
+}
+
+.kanban__card-foot select {
+  font: inherit;
+  font-size: 0.75rem;
+  border: 1px solid var(--color-borde);
+  border-radius: 6px;
+  padding: 0.15rem 0.3rem;
+  background: #fff;
+}
+
+/* Bandeja de leads (inbox de 3 paneles) */
+.inbox {
+  flex: 1;
+  display: flex;
+  /* .admin__content > * pone column; aquí los 3 paneles van en fila */
+  flex-direction: row;
+  min-height: 0;
+  background: #fff;
+  border: 1px solid var(--color-borde);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.inbox__lista {
+  flex: 0 0 300px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border-right: 1px solid var(--color-borde);
+}
+
+.inbox__lista-head {
+  padding: 1rem 1rem 0.6rem;
+}
+
+.inbox__lista-head h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.inbox__total {
+  font-size: 0.8rem;
+  color: var(--color-tinta-suave);
+  font-weight: 400;
+  margin-left: 0.3rem;
+}
+
+.inbox__buscar {
+  padding: 0 1rem 0.6rem;
+}
+
+.inbox__buscar input {
+  width: 100%;
+  font: inherit;
+  font-size: 0.9rem;
+  border: 1px solid var(--color-borde);
+  border-radius: 8px;
+  padding: 0.5rem 0.7rem;
+  background: var(--color-hueso, #f7f5f1);
+}
+
+.inbox__filtros {
+  display: flex;
+  gap: 0.4rem;
+  padding: 0 1rem 0.8rem;
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.inbox__filtros button {
+  font: inherit;
+  font-size: 0.82rem;
+  background: none;
+  border: 1px solid var(--color-borde);
+  border-radius: 99px;
+  padding: 0.25rem 0.7rem;
+  cursor: pointer;
+  color: var(--color-tinta-suave);
+}
+
+.inbox__filtros button.is-active {
+  background: var(--color-vino-osc);
+  border-color: var(--color-vino-osc);
+  color: #fff;
+}
+
+.inbox__items {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.inbox__item {
+  display: flex;
+  gap: 0.7rem;
+  width: 100%;
+  font: inherit;
+  text-align: left;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--color-borde);
+  border-left: 3px solid transparent;
+  padding: 0.8rem 1rem;
+  cursor: pointer;
+}
+
+.inbox__item:hover {
+  background: var(--color-hueso, #f7f5f1);
+}
+
+.inbox__item.is-active {
+  background: var(--color-hueso, #f7f5f1);
+  border-left-color: var(--color-vino-osc);
+}
+
+.inbox__avatar {
+  flex: 0 0 auto;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--color-vino-osc);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.inbox__avatar--grande {
+  width: 44px;
+  height: 44px;
+}
+
+.inbox__item-cuerpo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.inbox__item-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.inbox__item-top time {
+  font-size: 0.72rem;
+  color: var(--color-tinta-suave);
+  white-space: nowrap;
+}
+
+.inbox__item-preview {
+  font-size: 0.85rem;
+  color: var(--color-tinta-suave);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.inbox__item-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  color: var(--color-tinta-suave);
+}
+
+.inbox__punto {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-vino-osc);
+}
+
+.inbox__punto--ganado {
+  background: #2e7d32;
+}
+
+.inbox__punto--perdido {
+  background: #e5533d;
+}
+
+.inbox__punto--contactado,
+.inbox__punto--negociando {
+  background: var(--color-tinta-suave);
+}
+
+.inbox__badge {
+  margin-left: auto;
+  background: var(--color-vino-osc);
+  color: #fff;
+  font-size: 0.72rem;
+  border-radius: 99px;
+  padding: 0.05rem 0.45rem;
+}
+
+.inbox__chat {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.inbox__vacio {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-tinta-suave);
+}
+
+.inbox__chat-head {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.8rem 1.2rem;
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.inbox__volver {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: var(--color-tinta);
+  padding: 0.2rem;
+}
+
+.inbox__sub {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--color-tinta-suave);
+}
+
+.inbox__mensajes {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  background: var(--color-hueso, #f7f5f1);
+}
+
+.inbox__responder {
+  border-top: 1px solid var(--color-borde);
+  padding: 0.8rem 1.2rem;
+}
+
+.inbox__detalles {
+  flex: 0 0 260px;
+  border-left: 1px solid var(--color-borde);
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+.inbox__detalles-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.8rem;
+}
+
+.inbox__detalles-titulo {
+  margin: 0;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-tinta-suave);
+}
+
+/* Botón "Detalles" del chat y cierre de la hoja: solo existen en móvil */
+.inbox__info,
+.inbox__detalles-cerrar,
+.inbox__detalles-overlay {
+  display: none;
+}
+
+.inbox__contacto {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.inbox__seccion {
+  margin: 1rem 0 0.5rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-tinta-suave);
+}
+
+.inbox__etapas {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.inbox__etapa {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font: inherit;
+  font-size: 0.9rem;
+  text-align: left;
+  background: none;
+  border: none;
+  border-radius: 6px;
+  padding: 0.4rem 0.5rem;
+  cursor: pointer;
+  color: var(--color-tinta-suave);
+}
+
+.inbox__etapa:hover {
+  background: var(--color-hueso, #f7f5f1);
+}
+
+.inbox__etapa.is-active {
+  color: var(--color-tinta);
+  font-weight: 600;
+}
+
+.inbox__etapa .inbox__punto {
+  opacity: 0.35;
+}
+
+.inbox__etapa.is-active .inbox__punto {
+  opacity: 1;
+}
+
+.inbox__notas {
+  width: 100%;
+  font: inherit;
+  font-size: 0.9rem;
+  border: 1px solid var(--color-borde);
+  border-radius: 8px;
+  padding: 0.6rem 0.7rem;
+  resize: vertical;
+}
+
+.inbox__guardar {
+  margin-top: 0.5rem;
+}
+
+.burbuja {
+  max-width: 85%;
+  border-radius: 12px;
+  padding: 0.5rem 0.7rem;
+  font-size: 0.9rem;
+}
+
+.burbuja p {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.burbuja--entrante {
+  align-self: flex-start;
+  background: #fff;
+  border: 1px solid var(--color-borde);
+}
+
+.burbuja--saliente {
+  align-self: flex-end;
+  background: var(--color-vino-osc);
+  color: #fff;
+}
+
+.burbuja--error {
+  opacity: 0.6;
+  border: 1px dashed currentColor;
+}
+
+.burbuja__hora {
+  display: block;
+  font-size: 0.7rem;
+  opacity: 0.65;
+  margin-top: 0.2rem;
+  text-align: right;
+}
+
+.drawer__error {
+  margin: 0 0 0.5rem;
+  font-size: 0.85rem;
+  color: #b3261e;
+}
+
+.drawer__input-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.drawer__input-row input {
+  flex: 1;
+  font: inherit;
+  border: 1px solid var(--color-borde);
+  border-radius: 8px;
+  padding: 0.55rem 0.7rem;
 }
 
 /* Resumen (dashboard) */
@@ -1346,92 +2014,6 @@ img {
   color: var(--color-tinta-suave);
   padding: 2rem 0;
   text-align: center;
-}
-
-/* Tarjetas de pedido */
-.pedido-lista {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-}
-
-.pedido-card {
-  background: var(--color-blanco);
-  border: 1px solid var(--color-borde);
-  border-radius: var(--radio);
-}
-
-.pedido-card__head {
-  font: inherit;
-  width: 100%;
-  display: grid;
-  grid-template-columns: auto 1fr auto auto auto;
-  align-items: center;
-  gap: 1rem;
-  background: none;
-  border: none;
-  padding: 0.85rem 1.1rem;
-  cursor: pointer;
-  text-align: left;
-}
-
-.pedido-card__numero {
-  font-family: var(--fuente-titulo);
-  font-weight: 700;
-}
-
-.pedido-card__detalle {
-  border-top: 1px solid var(--color-borde);
-  padding: 1rem 1.1rem;
-  font-size: 0.92rem;
-}
-
-.pedido-card__detalle ul {
-  margin: 0 0 0.8rem;
-  padding-left: 1.1rem;
-}
-
-.pedido-card__acciones {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 0.8rem;
-}
-
-/* Estados de pedido — paleta monocroma con el vino de acento */
-.estado {
-  font-size: 0.78rem;
-  padding: 0.2rem 0.6rem;
-  border-radius: 999px;
-  border: 1px solid var(--color-borde);
-  color: var(--color-tinta-suave);
-  white-space: nowrap;
-}
-
-.estado--nuevo {
-  background: var(--color-vino);
-  border-color: var(--color-vino);
-  color: var(--color-blanco);
-}
-
-.estado--confirmado {
-  border-color: var(--color-vino);
-  color: var(--color-vino);
-}
-
-.estado--enviado {
-  background: var(--color-crema-2);
-}
-
-.estado--entregado {
-  color: var(--color-oro);
-}
-
-.estado--cancelado {
-  text-decoration: line-through;
 }
 
 /* Tabla de libros */
@@ -1672,13 +2254,79 @@ html[data-cargada] .site-main > * {
   .admin-form__row {
     flex-direction: column;
   }
-  .pedido-card__head {
-    grid-template-columns: 1fr auto;
-    row-gap: 0.25rem;
+}
+
+@media (max-width: 980px) {
+  .inbox__detalles {
+    display: none;
+  }
+
+  /* Hoja de detalles desde abajo, con overlay */
+  .inbox__detalles.is-open {
+    display: block;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 80;
+    max-height: 75vh;
+    overflow-y: auto;
+    background: #fff;
+    border-left: none;
+    border-radius: 14px 14px 0 0;
+    box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.25);
+  }
+
+  .inbox__detalles-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 70;
+    background: rgba(0, 0, 0, 0.45);
+  }
+
+  .inbox__info {
+    display: inline-block;
+    margin-left: auto;
+    font: inherit;
+    font-size: 0.85rem;
+    background: none;
+    border: 1px solid var(--color-borde);
+    border-radius: 99px;
+    padding: 0.3rem 0.8rem;
+    cursor: pointer;
+    color: var(--color-tinta-suave);
+  }
+
+  .inbox__detalles-cerrar {
+    display: block;
+    background: none;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+    color: var(--color-tinta-suave);
+    padding: 0.2rem;
   }
 }
 
 @media (max-width: 860px) {
+  /* Bandeja de leads: lista y chat se alternan a pantalla completa */
+  .inbox__lista {
+    flex: 1;
+  }
+  .inbox__chat {
+    display: none;
+  }
+  .inbox--abierto .inbox__lista {
+    display: none;
+  }
+  .inbox--abierto .inbox__chat {
+    display: flex;
+  }
+  .inbox__volver {
+    display: block;
+  }
+
   .admin__burger {
     display: block;
   }

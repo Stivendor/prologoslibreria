@@ -54,3 +54,33 @@ export interface Pedido {
   creado_en?: { toDate(): Date } | null;
   actualizado_en?: { toDate(): Date } | null;
 }
+
+// Timestamp de Firestore tipado estructuralmente (ver nota en Pedido).
+type TimestampFirestore = { toDate(): Date } | null;
+
+// Pipeline de venta del CRM de leads de WhatsApp (distinto al de pedidos).
+export type EstadoLead = 'nuevo' | 'contactado' | 'negociando' | 'ganado' | 'perdido';
+
+// Un lead es una conversación de WhatsApp. El id del documento es el teléfono.
+export interface Lead {
+  id: string; // = telefono
+  telefono: string;
+  nombre?: string;
+  estado: EstadoLead;
+  ultimo_mensaje_texto?: string;
+  no_leidos?: number;
+  notas?: string;
+  creado_en?: TimestampFirestore;
+  actualizado_en?: TimestampFirestore;
+  ultimo_mensaje_en?: TimestampFirestore;
+}
+
+export interface MensajeLead {
+  id: string;
+  direccion: 'entrante' | 'saliente';
+  texto: string;
+  tipo?: string; // text, image, etc. (Cloud API)
+  wa_message_id?: string;
+  estado_envio?: 'enviado' | 'error';
+  creado_en?: TimestampFirestore;
+}

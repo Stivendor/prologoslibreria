@@ -66,19 +66,27 @@ export function LibrosPanel() {
     }
   }
 
-  if (editando) {
-    return (
-      <LibroForm
-        libro={editando === 'nuevo' ? null : editando}
-        categorias={categorias}
-        alTerminar={() => {
-          setEditando(null);
-          cargar();
-        }}
-        alCancelar={() => setEditando(null)}
-      />
-    );
-  }
+  // Formulario en modal (mismo patrón que el pedido manual).
+  const modal = editando && (
+    <>
+      <div className="modal__overlay" onClick={() => setEditando(null)} aria-hidden="true" />
+      <div
+        className="modal"
+        role="dialog"
+        aria-label={editando === 'nuevo' ? 'Nuevo libro' : 'Editar libro'}
+      >
+        <LibroForm
+          libro={editando === 'nuevo' ? null : editando}
+          categorias={categorias}
+          alTerminar={() => {
+            setEditando(null);
+            cargar();
+          }}
+          alCancelar={() => setEditando(null)}
+        />
+      </div>
+    </>
+  );
 
   const nombreCategoria = (id: string) => categorias.find((c) => c.id === id)?.nombre ?? id;
 
@@ -164,6 +172,8 @@ export function LibrosPanel() {
           <Paginacion pagina={paginaActual} totalPaginas={totalPaginas} alCambiar={setPagina} />
         </div>
       )}
+
+      {modal}
     </section>
   );
 }
