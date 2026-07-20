@@ -31,7 +31,7 @@ export function BookDetailPage() {
     return (
       <div className="container section">
         <p className="muted">Este libro no está disponible.</p>
-        <Link to="/catalogo" className="link">
+        <Link to="/" className="link">
           ← Volver al catálogo
         </Link>
       </div>
@@ -53,7 +53,7 @@ export function BookDetailPage() {
 
   return (
     <div className="container section">
-      <Link to="/catalogo" className="link">
+      <Link to="/" className="link">
         ← Volver al catálogo
       </Link>
 

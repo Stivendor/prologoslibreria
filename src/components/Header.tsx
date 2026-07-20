@@ -1,4 +1,4 @@
-import { Link, NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 
 export function Header() {
@@ -14,13 +14,6 @@ export function Header() {
             <span className="brand__sub">Librería</span>
           </span>
         </Link>
-
-        <nav className="site-nav">
-          <NavLink to="/" end>
-            Inicio
-          </NavLink>
-          <NavLink to="/catalogo">Catálogo</NavLink>
-        </nav>
 
         <Link to="/carrito" className="cart-link" aria-label="Ver carrito">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">

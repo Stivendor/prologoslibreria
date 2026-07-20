@@ -11,7 +11,7 @@ export function CartPage() {
       <div className="container section empty-state">
         <h1>Tu carrito está vacío</h1>
         <p className="muted">Agrega libros del catálogo para empezar tu pedido.</p>
-        <Link to="/catalogo" className="btn btn--lg">
+        <Link to="/" className="btn btn--lg">
           Explorar catálogo
         </Link>
       </div>

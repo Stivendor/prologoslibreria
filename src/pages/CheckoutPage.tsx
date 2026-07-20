@@ -37,7 +37,7 @@ export function CheckoutPage() {
         <a href={urlPedido} target="_blank" rel="noreferrer" className="btn btn--lg">
           Abrir WhatsApp
         </a>{' '}
-        <Link to="/catalogo" className="btn btn--ghost btn--lg">
+        <Link to="/" className="btn btn--ghost btn--lg">
           Seguir explorando
         </Link>
       </div>
@@ -48,7 +48,7 @@ export function CheckoutPage() {
     return (
       <div className="container section empty-state">
         <h1>No hay nada para pagar</h1>
-        <Link to="/catalogo" className="btn btn--lg">
+        <Link to="/" className="btn btn--lg">
           Ir al catálogo
         </Link>
       </div>
