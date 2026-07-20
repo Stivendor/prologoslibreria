@@ -22,6 +22,7 @@
 
   /* Easings con carácter — las curvas nativas de CSS son demasiado suaves. */
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
 
   --radio: 10px;
   --radio-sm: 6px;
@@ -38,6 +39,12 @@ html,
 body {
   margin: 0;
   padding: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 body {
@@ -216,20 +223,6 @@ img {
   text-transform: uppercase;
   color: var(--color-oro);
 }
-.site-nav {
-  display: flex;
-  gap: 1.4rem;
-  margin-left: auto;
-  margin-right: 1.4rem;
-}
-.site-nav a {
-  color: var(--color-tinta);
-  font-weight: 600;
-  font-size: 0.95rem;
-}
-.site-nav a.active {
-  color: var(--color-vino);
-}
 .cart-link {
   position: relative;
   color: var(--color-tinta);
@@ -282,13 +275,6 @@ img {
 }
 
 /* Botones extra */
-.btn--invert {
-  background: var(--color-blanco);
-  color: var(--color-vino-osc);
-}
-.btn--invert:hover {
-  background: #e9e9e9;
-}
 .btn--ghost-light {
   background: transparent;
   color: var(--color-blanco);
@@ -300,24 +286,27 @@ img {
 
 /* ---------- Banner promocional ---------- */
 .promo {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: clamp(420px, 74vh, 700px);
   background: radial-gradient(120% 140% at 80% 0%, #232323 0%, #000000 55%);
   color: var(--color-crema);
   overflow: hidden;
 }
 .promo__inner {
-  display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
-  gap: 2rem;
-  align-items: center;
-  padding: 3.5rem 1.25rem;
+  padding: 4rem 1.25rem 5rem;
+  text-align: center;
 }
 .promo__copy {
-  max-width: 560px;
+  max-width: 680px;
+  margin-inline: auto;
 }
 .promo__title {
   color: var(--color-crema);
-  font-size: clamp(2.2rem, 5vw, 3.4rem);
-  line-height: 1.08;
+  font-size: clamp(2.4rem, 6vw, 4rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
   margin: 0 0 1rem;
 }
 .promo__title em {
@@ -325,150 +314,76 @@ img {
   color: #cfcfcf;
 }
 .promo__text {
-  font-size: 1.08rem;
+  font-size: clamp(1.05rem, 1.4vw, 1.2rem);
   color: rgba(255, 255, 255, 0.82);
-  margin: 0 0 1.8rem;
+  margin: 0 auto 1.6rem;
   max-width: 46ch;
+}
+.promo__envio {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 auto 1.6rem;
+  padding: 0.45rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--color-blanco);
+  background: rgba(255, 255, 255, 0.08);
 }
 .promo__actions {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 0.8rem;
 }
-.promo__spines {
-  position: relative;
-  height: 320px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.promo__spine {
+.promo__scroll {
   position: absolute;
-  width: 165px;
-  aspect-ratio: 3 / 4;
-  border-radius: 6px;
-  overflow: hidden;
-  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55);
-}
-.promo__spine--0 {
-  transform: rotate(-8deg) translateX(-92px) translateY(6px);
-  z-index: 1;
-}
-.promo__spine--1 {
-  z-index: 3;
-  transform: translateY(-14px) scale(1.06);
-}
-.promo__spine--2 {
-  transform: rotate(8deg) translateX(92px) translateY(6px);
-  z-index: 1;
-}
-
-/* ---------- Banda de beneficios ---------- */
-.trust {
-  background: var(--color-blanco);
-  border-bottom: 1px solid var(--color-borde);
-}
-.trust__grid {
+  bottom: 1.3rem;
+  left: 50%;
+  translate: -50% 0;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1.5rem;
-  padding: 1.6rem 1.25rem;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  color: rgba(255, 255, 255, 0.65);
+  transition: color 0.15s ease;
 }
-.trust__item {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-.trust__icon {
-  width: 30px;
-  height: 30px;
-  flex-shrink: 0;
-  color: var(--color-vino-osc);
-}
-.trust__title {
-  font-weight: 700;
-  font-size: 0.92rem;
-  margin: 0;
-}
-.trust__text {
-  font-size: 0.82rem;
-  color: var(--color-tinta-suave);
-  margin: 0.1rem 0 0;
-}
-
-/* ---------- Encabezado de sección editorial ---------- */
-.section-head {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-  border-bottom: 2px solid var(--color-vino-osc);
-  padding-bottom: 0.8rem;
-}
-.section-head__num {
-  display: block;
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.2em;
-  color: var(--color-tinta-suave);
-  margin-bottom: 0.15rem;
-}
-.section-title {
-  font-size: clamp(1.5rem, 3vw, 2rem);
-  margin: 0;
-}
-.section-title--center {
-  text-align: center;
-}
-.section-head__link {
-  font-weight: 700;
-  font-size: 0.85rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--color-vino-osc);
-  white-space: nowrap;
-}
-
-/* ---------- Banda de categorías ---------- */
-.cats-band {
-  background: var(--color-blanco);
-  border-top: 1px solid var(--color-borde);
-  border-bottom: 1px solid var(--color-borde);
-  padding: 2.5rem 0;
-}
-.cats-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-}
-.cat-tile {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
-  padding: 1.1rem 1.3rem;
-  border: 1px solid var(--color-borde);
-  border-radius: var(--radio);
-  font-family: var(--fuente-titulo);
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: var(--color-vino-osc);
-  transition: background 0.15s ease, color 0.15s ease;
-}
-.cat-tile:hover {
-  background: var(--color-vino-osc);
+.promo__scroll:hover {
   color: var(--color-blanco);
-  text-decoration: none;
 }
-.cat-tile__arrow {
-  font-size: 1.2rem;
-  transition: translate 0.2s var(--ease-out);
-}
-@media (hover: hover) and (pointer: fine) {
-  .cat-tile:hover .cat-tile__arrow {
-    translate: 4px 0;
+@media (prefers-reduced-motion: no-preference) {
+  .promo__scroll svg {
+    animation: promo-flotar 2.2s var(--ease-in-out) infinite;
   }
+}
+@keyframes promo-flotar {
+  50% {
+    transform: translateY(6px);
+  }
+}
+/* Parallax sutil al hacer scroll: el copy sube más lento y se desvanece.
+   Mejora progresiva — sin soporte de scroll-timeline no pasa nada. */
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .promo__copy {
+      animation: promo-parallax linear both;
+      animation-timeline: scroll();
+      animation-range: 0 90vh;
+    }
+    @keyframes promo-parallax {
+      to {
+        transform: translateY(9rem);
+        opacity: 0;
+      }
+    }
+  }
+}
+/* El header sticky no debe tapar el inicio del catálogo al anclar */
+#catalogo {
+  scroll-margin-top: 4.5rem;
 }
 
 /* ---------- Grid de libros ---------- */
@@ -2198,20 +2113,6 @@ html[data-cargada] .site-main > * {
 
 /* ---------- Responsive ---------- */
 @media (max-width: 980px) {
-  .promo__inner {
-    grid-template-columns: 1fr;
-  }
-  .promo__spines {
-    height: 260px;
-    margin-top: 1rem;
-  }
-  .trust__grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.1rem;
-  }
-  .cats-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -2237,12 +2138,6 @@ html[data-cargada] .site-main > * {
   .grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 0.9rem;
-  }
-  .cats-grid {
-    grid-template-columns: 1fr;
-  }
-  .promo__spine {
-    width: 135px;
   }
   .site-footer__top {
     grid-template-columns: 1fr 1fr;
@@ -2352,14 +2247,7 @@ html[data-cargada] .site-main > * {
 }
 
 @media (max-width: 520px) {
-  .site-nav {
-    gap: 0.9rem;
-    margin-right: 0.9rem;
-  }
   .form-row {
-    grid-template-columns: 1fr;
-  }
-  .trust__grid {
     grid-template-columns: 1fr;
   }
   .stats-grid {

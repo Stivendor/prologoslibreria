@@ -1,12 +1,11 @@
 import { lazy, Suspense, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { CartProvider } from './context/CartContext';
 import { AuthProvider } from './context/AuthContext';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { WhatsAppButton } from './components/WhatsAppButton';
 import { ErrorBoundary } from './components/ErrorBoundary';
-import { HomePage } from './pages/HomePage';
 import { CatalogPage } from './pages/CatalogPage';
 import { BookDetailPage } from './pages/BookDetailPage';
 import { CartPage } from './pages/CartPage';
@@ -16,6 +15,12 @@ import { CheckoutPage } from './pages/CheckoutPage';
 const AdminPage = lazy(() =>
   import('./pages/AdminPage').then((m) => ({ default: m.AdminPage }))
 );
+
+// /catalogo vivía como ruta propia; redirige a la landing conservando ?categoria=...
+function RedirigirCatalogo() {
+  const { search } = useLocation();
+  return <Navigate to={{ pathname: '/', search }} replace />;
+}
 
 // El panel /admin no lleva el chrome de la tienda (header, footer, WhatsApp).
 function Contenido() {
@@ -38,8 +43,8 @@ function Contenido() {
       <main className="site-main">
         <ErrorBoundary>
           <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/catalogo" element={<CatalogPage />} />
+            <Route path="/" element={<CatalogPage />} />
+            <Route path="/catalogo" element={<RedirigirCatalogo />} />
             <Route path="/libro/:id" element={<BookDetailPage />} />
             <Route path="/carrito" element={<CartPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
@@ -53,7 +58,7 @@ function Contenido() {
                 </AuthProvider>
               }
             />
-            <Route path="*" element={<HomePage />} />
+            <Route path="*" element={<CatalogPage />} />
           </Routes>
         </ErrorBoundary>
       </main>

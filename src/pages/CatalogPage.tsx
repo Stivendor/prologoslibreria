@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { useCatalogo } from '../hooks/useCatalogo';
 import { BookCard } from '../components/BookCard';
 import { Paginacion } from '../components/Paginacion';
+import { CONTACTO } from '../config';
 
 const LIBROS_POR_PAGINA = 10;
 
@@ -47,13 +48,54 @@ export function CatalogPage() {
 
   const cambiarPagina = (p: number) => {
     setPagina(p);
-    window.scrollTo({ top: 0 });
+    // behavior 'auto' respeta el scroll-behavior del CSS (suave salvo reduced-motion)
+    document.getElementById('catalogo')?.scrollIntoView();
   };
 
   return (
-    <div className="container section">
-      <h1>Catálogo</h1>
+    <div>
+      {/* Banner compacto de marca; el catálogo va justo debajo */}
+      <section className="promo">
+        <div className="container promo__inner">
+          <div className="promo__copy">
+            <p className="eyebrow eyebrow--light">Librería cristiana · Colombia</p>
+            <h1 className="promo__title">
+              Libros que <em>alimentan</em> el alma
+            </h1>
+            <p className="promo__text">
+              Libros y devocionales con propósito. Elige, confirma tu pedido
+              por WhatsApp y recíbelos en casa.
+            </p>
+            <p className="promo__envio">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M5 18H3V6a1 1 0 0 1 1-1h11v13" />
+                <path d="M15 8h4l3 4v6h-2" />
+                <circle cx="7.5" cy="18" r="1.8" />
+                <circle cx="17.5" cy="18" r="1.8" />
+                <path d="M9.3 18H15" />
+              </svg>
+              Envíos a todo Colombia
+            </p>
+            <div className="promo__actions">
+              <a
+                className="btn btn--lg btn--ghost-light"
+                href={`https://instagram.com/${CONTACTO.instagram}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Síguenos en Instagram
+              </a>
+            </div>
+          </div>
+        </div>
+        <a className="promo__scroll" href="#catalogo" aria-label="Bajar al catálogo">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="m6 9 6 6 6-6" />
+          </svg>
+        </a>
+      </section>
 
+      <div className="container section" id="catalogo">
       <div className="catalog-controls">
         <input
           type="search"
@@ -100,6 +142,7 @@ export function CatalogPage() {
           <Paginacion pagina={pagina} totalPaginas={totalPaginas} alCambiar={cambiarPagina} />
         </>
       )}
+      </div>
     </div>
   );
 }
