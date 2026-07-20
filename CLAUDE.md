@@ -52,8 +52,11 @@ subscribes in real time (`suscribirsePedidos`, `onSnapshot`) and moves orders
 through estados (`nuevo → confirmado → enviado → entregado / cancelado`).
 
 **Admin panel (`/admin`)** — `src/pages/AdminPage.tsx` with components under
-`src/components/admin/` (LoginForm, PedidosPanel, LibrosPanel, LibroForm).
-Requires Firebase: email/password login via `src/context/AuthContext.tsx`
+`src/components/admin/` (LoginForm, ResumenPanel, PedidosPanel, LibrosPanel,
+LibroForm). Three tabs: **Resumen** (client-side stats over the live orders
+subscription — nuevos, ingresos del mes, ticket promedio, top libros),
+**Pedidos**, and **Libros**. Lazy-loaded (`React.lazy` in `App.tsx`) to keep the
+panel out of the store bundle. Requires Firebase: email/password login via `src/context/AuthContext.tsx`
 (wraps only the `/admin` route), cover uploads via `src/lib/storage.ts`
 (`portadas/{libroId}` in Storage, validated size/type before upload). The
 `/admin` route renders **without** the store chrome (Header/Footer/WhatsApp) —
@@ -73,6 +76,9 @@ message and open that URL. Keep contact details in `config.ts`, not inline.
 **Routing** — `App.tsx` defines all routes (`/`, `/catalogo`, `/libro/:id`,
 `/carrito`, `/checkout`, `/admin`, `*` → Home). Global chrome (`Header`,
 `Footer`, `WhatsAppButton`) sits outside `<Routes>` and is hidden on `/admin`.
+`<Routes>` is wrapped in `src/components/ErrorBoundary.tsx` so a render error in
+one page shows a fallback instead of blanking the app. The catalog paginates via
+`src/components/Paginacion.tsx`.
 
 ## Styling
 

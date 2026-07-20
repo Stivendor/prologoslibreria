@@ -17,19 +17,21 @@ compras y checkout, conservando el canal de WhatsApp que los clientes ya conocen
 
 ## Estado actual
 
-Implementado (Fases 2–4 del plan):
+Implementado:
 
-- Catálogo público por categorías, con detalle de libro (RF-01, RF-02).
+- Catálogo público por categorías con paginación y detalle de libro (RF-01, RF-02).
 - Buscador por título/autor y filtro por categoría (RF-03, RF-04).
 - Sección de destacados / "Favoritos del mes" (RF-09).
 - Carrito de compras con persistencia local y total (RF-05).
 - Botón de WhatsApp y finalización de pedido por WhatsApp (RF-08).
 - Diseño responsive con la identidad de marca (RNF-01, RNF-04).
-- Backend de datos preparado para Firebase/Firestore (`firebase/`).
+- Backend Firebase en producción (Firestore + Auth + Storage), con fallback a
+  datos de ejemplo locales cuando no hay credenciales.
+- Panel de administración en `/admin`: resumen con estadísticas, gestión de
+  pedidos en tiempo real y CRUD de catálogo con carga de portadas.
 
-Pendiente (Fase 5, requiere insumos de Prólogos):
+Pendiente (requiere insumos de Prólogos):
 
-- Conexión de la base de datos (Firestore) con el catálogo real.
 - Integración de pasarela de pagos colombiana — PSE, Nequi, tarjeta (RF-06).
 - Correo de confirmación de pedido con Resend (RF-07).
 - Portadas reales de los libros y datos definitivos del catálogo.
@@ -65,7 +67,7 @@ src/
   data/         seed.ts (datos de ejemplo) y catalogo.ts (acceso a datos)
   hooks/        useCatalogo
   lib/          firebase.ts, format.ts
-  pages/        Home, Catálogo, Detalle, Carrito, Checkout
+  pages/        Home, Catálogo, Detalle, Carrito, Checkout, Admin
   config.ts     contacto/marca (WhatsApp, Instagram)
 firebase/
   firestore.rules      reglas de seguridad
