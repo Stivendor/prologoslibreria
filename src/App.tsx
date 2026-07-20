@@ -9,7 +9,6 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 import { CatalogPage } from './pages/CatalogPage';
 import { BookDetailPage } from './pages/BookDetailPage';
 import { CartPage } from './pages/CartPage';
-import { CheckoutPage } from './pages/CheckoutPage';
 
 // El panel es solo para el admin: no debe pesar en el bundle de la tienda.
 const AdminPage = lazy(() =>
@@ -47,7 +46,6 @@ function Contenido() {
             <Route path="/catalogo" element={<RedirigirCatalogo />} />
             <Route path="/libro/:id" element={<BookDetailPage />} />
             <Route path="/carrito" element={<CartPage />} />
-            <Route path="/checkout" element={<CheckoutPage />} />
             <Route
               path="/admin"
               element={

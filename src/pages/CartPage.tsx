@@ -1,10 +1,13 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart, MAX_POR_LIBRO } from '../context/CartContext';
 import { formatearPrecio } from '../lib/format';
 import { BookCover } from '../components/BookCover';
+import { CheckoutModal } from '../components/CheckoutModal';
 
 export function CartPage() {
   const { items, totalPrecio, cambiarCantidad, quitar, vaciar } = useCart();
+  const [checkoutAbierto, setCheckoutAbierto] = useState(false);
 
   if (items.length === 0) {
     return (
@@ -74,14 +77,19 @@ export function CartPage() {
           </div>
           <p className="muted small">El envío se calcula al finalizar el pedido.</p>
 
-          <Link to="/checkout" className="btn btn--lg btn--block">
+          <button
+            className="btn btn--lg btn--block"
+            onClick={() => setCheckoutAbierto(true)}
+          >
             Finalizar pedido
-          </Link>
+          </button>
           <button className="link small" onClick={vaciar}>
             Vaciar carrito
           </button>
         </aside>
       </div>
+
+      <CheckoutModal abierto={checkoutAbierto} onCerrar={() => setCheckoutAbierto(false)} />
     </div>
   );
 }

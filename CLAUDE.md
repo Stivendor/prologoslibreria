@@ -72,9 +72,13 @@ change). Consume via `useCart()`; it throws if used outside `<CartProvider>`.
 by building a `wa.me` link. `src/config.ts` centralizes contact/brand constants
 (`CONTACTO`, `urlWhatsApp(mensaje)`); the checkout and WhatsApp button compose a
 message and open that URL. Keep contact details in `config.ts`, not inline.
+Checkout is a native `<dialog>` modal (`src/components/CheckoutModal.tsx`) opened
+from the cart — **not** a separate route. The `window.open('', '_blank')` for
+WhatsApp must stay synchronous inside the click handler (Safari blocks popups
+born outside the user gesture).
 
 **Routing** — `App.tsx` defines all routes (`/`, `/catalogo`, `/libro/:id`,
-`/carrito`, `/checkout`, `/admin`, `*` → Home). Global chrome (`Header`,
+`/carrito`, `/admin`, `*` → Home). Global chrome (`Header`,
 `Footer`, `WhatsAppButton`) sits outside `<Routes>` and is hidden on `/admin`.
 `<Routes>` is wrapped in `src/components/ErrorBoundary.tsx` so a render error in
 one page shows a fallback instead of blanking the app. The catalog paginates via

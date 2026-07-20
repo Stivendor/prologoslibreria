@@ -62,12 +62,13 @@ Con esas variables, la app consulta Firestore automáticamente en lugar de los d
 
 ```
 src/
-  components/   Header, Footer, BookCard, BookCover, TrustBadges, WhatsAppButton, ...
+  components/   Header, Footer, BookCard, BookCover, TrustBadges, WhatsAppButton,
+                CheckoutModal (finalizar pedido), ...
   context/      CartContext (carrito con persistencia local)
   data/         seed.ts (datos de ejemplo) y catalogo.ts (acceso a datos)
   hooks/        useCatalogo
   lib/          firebase.ts, format.ts
-  pages/        Home, Catálogo, Detalle, Carrito, Checkout, Admin
+  pages/        Home, Catálogo, Detalle, Carrito, Admin
   config.ts     contacto/marca (WhatsApp, Instagram)
 firebase/
   firestore.rules      reglas de seguridad
