@@ -855,6 +855,84 @@ img {
   font-size: 0.9rem;
 }
 
+/* ---------- Modal checkout (nombre propio: .modal ya lo usa el panel admin) ---------- */
+.checkout-modal {
+  border: none;
+  border-radius: var(--radio);
+  padding: 0;
+  width: min(880px, 92vw);
+  max-height: 90vh;
+  margin: auto; /* centra en el top-layer */
+  background: var(--color-blanco);
+  color: var(--color-tinta);
+  box-shadow: var(--sombra-alta);
+  overflow: hidden;
+}
+.checkout-modal[open] {
+  animation: modal-in 0.28s var(--ease-out);
+}
+.checkout-modal::backdrop {
+  background: rgba(0, 0, 0, 0.5);
+  animation: modal-backdrop 0.25s var(--ease-out);
+}
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+@keyframes modal-backdrop {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.checkout-modal__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.2rem 1.5rem;
+  border-bottom: 1px solid var(--color-borde);
+}
+.checkout-modal__head h1 {
+  margin: 0;
+  font-size: 1.3rem;
+}
+.checkout-modal__close {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+  line-height: 1;
+  color: var(--color-tinta-suave);
+  padding: 0.35rem 0.55rem;
+  border-radius: var(--radio-sm);
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.checkout-modal__close:hover {
+  color: var(--color-tinta);
+  background: var(--color-crema-2);
+}
+.checkout-modal__body {
+  padding: 1.5rem;
+  overflow-y: auto;
+  max-height: calc(90vh - 4.4rem);
+}
+/* Dentro del modal el formulario ya vive en una superficie: sin doble borde. */
+.checkout-modal .checkout-layout {
+  margin-top: 0;
+}
+.checkout-modal .checkout-form {
+  border: none;
+  padding: 0;
+}
+
 .empty-state {
   text-align: center;
   padding: 4rem 1.25rem;
@@ -2108,6 +2186,10 @@ html[data-cargada] .site-main > * {
   .qty button:active,
   .whatsapp-fab:active {
     transform: none;
+  }
+  .checkout-modal[open],
+  .checkout-modal::backdrop {
+    animation: none;
   }
 }
 
