@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react';
 import { CartProvider, useCart } from './context/CartContext';
 import { AuthProvider } from './context/AuthContext';
 import { Header } from './components/Header';
@@ -80,6 +81,7 @@ export default function App() {
     <CartProvider>
       <BrowserRouter>
         <Contenido />
+        <Analytics />
       </BrowserRouter>
     </CartProvider>
   );
