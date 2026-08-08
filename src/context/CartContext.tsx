@@ -23,6 +23,11 @@ interface CartContextValue {
   quitar: (libroId: string) => void;
   cambiarCantidad: (libroId: string, cantidad: number) => void;
   vaciar: () => void;
+  /* El carrito es un panel lateral, no una ruta: su apertura vive aquí para que
+     el header, el footer y el redirect de /carrito lo abran sin pasar props. */
+  carritoAbierto: boolean;
+  abrirCarrito: () => void;
+  cerrarCarrito: () => void;
 }
 
 const CartContext = createContext<CartContextValue | null>(null);
@@ -43,6 +48,7 @@ function cargarInicial(): CartItem[] {
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>(cargarInicial);
+  const [carritoAbierto, setCarritoAbierto] = useState(false);
 
   useEffect(() => {
     try {
@@ -84,6 +90,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const vaciar = useCallback(() => setItems([]), []);
 
+  const abrirCarrito = useCallback(() => setCarritoAbierto(true), []);
+  const cerrarCarrito = useCallback(() => setCarritoAbierto(false), []);
+
   const totalItems = useMemo(
     () => items.reduce((acc, i) => acc + i.cantidad, 0),
     [items],
@@ -102,8 +111,22 @@ export function CartProvider({ children }: { children: ReactNode }) {
       quitar,
       cambiarCantidad,
       vaciar,
+      carritoAbierto,
+      abrirCarrito,
+      cerrarCarrito,
     }),
-    [items, totalItems, totalPrecio, agregar, quitar, cambiarCantidad, vaciar],
+    [
+      items,
+      totalItems,
+      totalPrecio,
+      agregar,
+      quitar,
+      cambiarCantidad,
+      vaciar,
+      carritoAbierto,
+      abrirCarrito,
+      cerrarCarrito,
+    ],
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

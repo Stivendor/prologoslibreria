@@ -1,7 +1,10 @@
 import { Link } from 'react-router-dom';
 import { CONTACTO, urlWhatsApp } from '../config';
+import { useCart } from '../context/CartContext';
 
 export function Footer() {
+  const { abrirCarrito } = useCart();
+
   return (
     <footer className="site-footer">
       <div className="container site-footer__top">
@@ -18,7 +21,11 @@ export function Footer() {
           <Link to="/">Catálogo</Link>
           <Link to="/?categoria=devocionales">Devocionales</Link>
           <Link to="/?categoria=vida-cristiana">Vida cristiana</Link>
-          <Link to="/carrito">Mi carrito</Link>
+          {/* El carrito es un panel lateral: abrirlo no debe sacar al usuario
+              de la página en la que está. */}
+          <button type="button" className="site-footer__link" onClick={abrirCarrito}>
+            Mi carrito
+          </button>
         </nav>
 
         <div className="site-footer__col">
