@@ -223,10 +223,15 @@ img {
   text-transform: uppercase;
   color: var(--color-oro);
 }
+/* Es un <button> (abre el panel lateral), no un enlace: reset de botón. */
 .cart-link {
   position: relative;
   color: var(--color-tinta);
   display: inline-flex;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
 }
 .cart-link__count {
   position: absolute;
@@ -682,14 +687,85 @@ img {
   margin-bottom: 1.2rem;
 }
 
-/* ---------- Carrito ---------- */
-.cart-layout {
-  display: grid;
-  grid-template-columns: 1fr 320px;
-  gap: 2rem;
-  align-items: start;
-  margin-top: 1.5rem;
+/* ---------- Carrito (panel lateral) ---------- */
+.cart-drawer {
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  width: min(420px, 100vw);
+  height: 100dvh;
+  max-height: none;
+  max-width: none;
+  /* Pegado al borde derecho del top-layer. */
+  margin: 0 0 0 auto;
+  background: var(--color-blanco);
+  color: var(--color-tinta);
+  box-shadow: var(--sombra-alta);
 }
+/* El display va solo en [open]: declararlo en la regla base pisaría el
+   display:none que el navegador aplica al <dialog> cerrado. */
+.cart-drawer[open] {
+  display: flex;
+  flex-direction: column;
+  animation: drawer-in 0.3s var(--ease-out);
+}
+.cart-drawer::backdrop {
+  background: rgba(0, 0, 0, 0.5);
+  animation: modal-backdrop 0.25s var(--ease-out);
+}
+@keyframes drawer-in {
+  from {
+    transform: translateX(100%);
+  }
+}
+.cart-drawer__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.1rem 1.3rem;
+  border-bottom: 1px solid var(--color-borde);
+}
+.cart-drawer__head h2 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+.cart-drawer__close {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+  line-height: 1;
+  color: var(--color-tinta-suave);
+  padding: 0.35rem 0.55rem;
+  border-radius: var(--radio-sm);
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.cart-drawer__close:hover {
+  color: var(--color-tinta);
+  background: var(--color-crema-2);
+}
+/* El body crece y hace el scroll; el pie queda fijo abajo por el flex. */
+.cart-drawer__body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.1rem 1.3rem;
+}
+.cart-drawer__body .empty-state {
+  padding: 2.5rem 0;
+}
+.cart-drawer__foot {
+  border-top: 1px solid var(--color-borde);
+  padding: 1.1rem 1.3rem;
+  background: var(--color-crema-2);
+}
+.cart-drawer__foot .btn {
+  margin-top: 0.4rem;
+}
+.cart-drawer__vaciar {
+  display: block;
+  margin: 0.7rem auto 0;
+}
+
 .cart-list {
   list-style: none;
   margin: 0;
@@ -698,21 +774,28 @@ img {
   flex-direction: column;
   gap: 1rem;
 }
+/* Medido para el ancho del panel lateral (~420px), no para una página. */
 .cart-item {
   display: grid;
-  grid-template-columns: 72px 1fr auto;
-  gap: 1rem;
+  grid-template-columns: 56px 1fr auto;
+  gap: 0.8rem;
   align-items: center;
   background: var(--color-blanco);
   border: 1px solid var(--color-borde);
   border-radius: var(--radio);
-  padding: 0.9rem;
+  padding: 0.7rem;
 }
 .cart-item__cover {
-  width: 72px;
+  width: 56px;
   aspect-ratio: 3 / 4;
   border-radius: var(--radio-sm);
   overflow: hidden;
+}
+.cart-item__info {
+  min-width: 0;
+}
+.cart-item__info p {
+  margin: 0.2rem 0 0;
 }
 .cart-item__title {
   font-weight: 600;
@@ -834,7 +917,6 @@ img {
 }
 .notice {
   background: var(--color-crema-2);
-  border-left: 3px solid var(--color-oro);
   border-radius: var(--radio-sm);
   padding: 0.9rem 1rem;
   font-size: 0.9rem;
@@ -979,12 +1061,23 @@ img {
   color: var(--color-crema);
   margin: 0 0 0.3rem;
 }
-.site-footer__col a {
+.site-footer__col a,
+.site-footer__link {
   color: #cfcfcf;
   font-size: 0.92rem;
 }
-.site-footer__col a:hover {
+.site-footer__col a:hover,
+.site-footer__link:hover {
   color: #fff;
+}
+/* "Mi carrito" abre el panel lateral: botón con aspecto de enlace del footer. */
+.site-footer__link {
+  background: none;
+  border: none;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
 }
 .site-footer__bottom {
   border-top: 1px solid rgba(255, 255, 255, 0.14);
@@ -2188,7 +2281,9 @@ html[data-cargada] .site-main > * {
     transform: none;
   }
   .checkout-modal[open],
-  .checkout-modal::backdrop {
+  .checkout-modal::backdrop,
+  .cart-drawer[open],
+  .cart-drawer::backdrop {
     animation: none;
   }
 }
@@ -2207,7 +2302,6 @@ html[data-cargada] .site-main > * {
   .detail__cover {
     max-width: 280px;
   }
-  .cart-layout,
   .checkout-layout {
     grid-template-columns: 1fr;
   }

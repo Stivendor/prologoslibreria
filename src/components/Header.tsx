@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 
 export function Header() {
-  const { totalItems } = useCart();
+  const { totalItems, abrirCarrito } = useCart();
 
   return (
     <header className="site-header">
@@ -15,7 +15,12 @@ export function Header() {
           </span>
         </Link>
 
-        <Link to="/carrito" className="cart-link" aria-label="Ver carrito">
+        <button
+          type="button"
+          className="cart-link"
+          onClick={abrirCarrito}
+          aria-label="Abrir carrito"
+        >
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path
               d="M3 3h2l2.4 12.3a1 1 0 0 0 1 .8h9.7a1 1 0 0 0 1-.8L21 7H6"
@@ -33,7 +38,7 @@ export function Header() {
               {totalItems}
             </span>
           )}
-        </Link>
+        </button>
       </div>
     </header>
   );

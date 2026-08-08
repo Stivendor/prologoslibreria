@@ -1,14 +1,14 @@
 import { lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
-import { CartProvider } from './context/CartContext';
+import { CartProvider, useCart } from './context/CartContext';
 import { AuthProvider } from './context/AuthContext';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
+import { CartDrawer } from './components/CartDrawer';
 import { WhatsAppButton } from './components/WhatsAppButton';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { CatalogPage } from './pages/CatalogPage';
 import { BookDetailPage } from './pages/BookDetailPage';
-import { CartPage } from './pages/CartPage';
 
 // El panel es solo para el admin: no debe pesar en el bundle de la tienda.
 const AdminPage = lazy(() =>
@@ -19,6 +19,14 @@ const AdminPage = lazy(() =>
 function RedirigirCatalogo() {
   const { search } = useLocation();
   return <Navigate to={{ pathname: '/', search }} replace />;
+}
+
+// /carrito era una página; ahora es un panel lateral: la ruta sobrevive para los
+// enlaces viejos, abriendo el drawer sobre la landing.
+function RedirigirCarrito() {
+  const { abrirCarrito } = useCart();
+  useEffect(abrirCarrito, [abrirCarrito]);
+  return <Navigate to="/" replace />;
 }
 
 // El panel /admin no lleva el chrome de la tienda (header, footer, WhatsApp).
@@ -45,7 +53,7 @@ function Contenido() {
             <Route path="/" element={<CatalogPage />} />
             <Route path="/catalogo" element={<RedirigirCatalogo />} />
             <Route path="/libro/:id" element={<BookDetailPage />} />
-            <Route path="/carrito" element={<CartPage />} />
+            <Route path="/carrito" element={<RedirigirCarrito />} />
             <Route
               path="/admin"
               element={
@@ -62,6 +70,7 @@ function Contenido() {
       </main>
       {!esAdmin && <Footer />}
       {!esAdmin && <WhatsAppButton />}
+      {!esAdmin && <CartDrawer />}
     </>
   );
 }
