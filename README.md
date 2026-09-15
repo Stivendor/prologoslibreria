@@ -1,77 +1,139 @@
-# Prólogos Librería — Tienda en línea (MVP)
+# Prologos Libreria - Tienda en linea (MVP)
 
-Tienda en línea para **Prólogos Librería**, una librería cristiana con catálogo
-curado de libros y devocionales. Este repositorio implementa el MVP descrito en
-la *Planeación Estratégica y Requerimientos*: catálogo navegable, carrito de
-compras y checkout, conservando el canal de WhatsApp que los clientes ya conocen.
+Tienda en linea para **Prologos Libreria**, una libreria cristiana con catalogo
+curado de libros y devocionales. El MVP incluye catalogo navegable, carrito,
+checkout por WhatsApp y panel administrativo para gestionar pedidos y libros.
 
 ## Stack
 
-| Componente        | Tecnología                          |
-| ----------------- | ----------------------------------- |
-| Frontend          | React + Vite + TypeScript           |
-| Datos / backend   | Firebase (Firestore)                |
-| Pagos             | Wompi / ePayco *(fase posterior)*   |
-| Correos           | Resend *(fase posterior)*           |
-| Despliegue        | Vercel                              |
+| Componente | Tecnologia |
+| --- | --- |
+| Frontend | React 19 + Vite + TypeScript |
+| Rutas | React Router |
+| Datos | Firebase Firestore |
+| Autenticacion | Firebase Auth |
+| Archivos | Firebase Storage |
+| Backend serverless | Vercel Functions en `api/` |
+| Admin server-side | Firebase Admin SDK |
+| Mensajeria | WhatsApp Cloud API / Meta Graph API |
+| Analytics | Vercel Analytics |
+| Estilos | CSS global en `src/index.css` |
+| Lint | Oxlint |
+| Despliegue | Vercel |
 
 ## Estado actual
 
 Implementado:
 
-- Catálogo público por categorías con paginación y detalle de libro (RF-01, RF-02).
-- Buscador por título/autor y filtro por categoría (RF-03, RF-04).
-- Sección de destacados / "Favoritos del mes" (RF-09).
-- Carrito de compras con persistencia local y total (RF-05).
-- Botón de WhatsApp y finalización de pedido por WhatsApp (RF-08).
-- Diseño responsive con la identidad de marca (RNF-01, RNF-04).
-- Backend Firebase en producción (Firestore + Auth + Storage), con fallback a
-  datos de ejemplo locales cuando no hay credenciales.
-- Panel de administración en `/admin`: resumen con estadísticas, gestión de
-  pedidos en tiempo real y CRUD de catálogo con carga de portadas.
+- Catalogo publico por categorias, con paginacion y detalle de libro.
+- Buscador por titulo/autor y filtro por categoria.
+- Seccion de destacados / "Favoritos del mes".
+- Carrito lateral con persistencia local.
+- Checkout en modal: registra el pedido en Firestore cuando Firebase esta
+  configurado y abre WhatsApp con el resumen de compra.
+- Fallback a datos locales (`src/data/seed.ts`) cuando no hay credenciales de
+  Firebase para permitir desarrollo y demos.
+- Panel de administracion en `/admin`, protegido con Firebase Auth:
+  - Resumen de pedidos y libros mas vendidos.
+  - Gestion de pedidos en tiempo real.
+  - CRUD de catalogo con subida de portadas a Firebase Storage.
+- Endpoints serverless para WhatsApp Cloud API:
+  - `api/whatsapp/send.ts`: envio de mensajes salientes desde servidor.
+  - `api/whatsapp/webhook.ts`: recepcion de mensajes entrantes firmados por Meta.
 
-Pendiente (requiere insumos de Prólogos):
+Pendiente o dependiente de configuracion externa:
 
-- Integración de pasarela de pagos colombiana — PSE, Nequi, tarjeta (RF-06).
-- Correo de confirmación de pedido con Resend (RF-07).
-- Portadas reales de los libros y datos definitivos del catálogo.
-
-Mientras no haya credenciales de Firebase, la app usa datos de ejemplo locales
-(`src/data/seed.ts`) para poder desarrollarse y demostrarse sin bloqueos.
+- Conectar/mostrar la bandeja de Leads de WhatsApp en la navegacion actual de
+  `/admin`. El backend, la capa de datos y el componente `LeadsInbox` existen,
+  pero `AdminPage.tsx` hoy solo monta Resumen, Pedidos y Libros.
+- Configurar Meta Business / WhatsApp Cloud API en produccion.
+- Integracion de pasarela de pagos colombiana (Wompi/ePayco u otra).
+- Correo de confirmacion de pedido (por ejemplo, Resend).
+- Portadas reales y catalogo definitivo del cliente.
 
 ## Desarrollo
 
 ```bash
 npm install
 npm run dev      # servidor de desarrollo
-npm run build    # verificación de tipos + build de producción
+npm run build    # verificacion de tipos + build de produccion
 npm run lint     # linter
+npm run preview  # preview del build
 ```
 
-### Conectar Firebase (opcional)
+## Variables de entorno
 
-Ver la guía detallada en [`firebase/README.md`](firebase/README.md). En resumen:
+El cliente web usa variables publicas `VITE_FIREBASE_*`. Las funciones
+serverless usan variables privadas sin prefijo `VITE_`.
 
-1. Crear el proyecto en Firebase y habilitar Firestore.
-2. Copiar `.env.example` a `.env` y completar las variables `VITE_FIREBASE_*` (config web).
-3. Publicar `firebase/firestore.rules` y cargar el catálogo con `firebase/seed-firestore.mjs`.
+Ver `.env.example` para la lista completa. En resumen:
 
-Con esas variables, la app consulta Firestore automáticamente en lugar de los datos de ejemplo.
+- `VITE_FIREBASE_*`: configuracion web publica de Firebase.
+- `FIREBASE_SERVICE_ACCOUNT`: JSON completo del service account para
+  Firebase Admin SDK en Vercel Functions.
+- `WHATSAPP_VERIFY_TOKEN`: token inventado para verificar el webhook de Meta.
+- `WHATSAPP_APP_SECRET`: secreto de la app de Meta para validar firmas HMAC.
+- `WHATSAPP_TOKEN`: token permanente de WhatsApp Cloud API.
+- `WHATSAPP_PHONE_NUMBER_ID`: ID del numero de WhatsApp Cloud API.
+
+No exponer variables privadas con prefijo `VITE_`.
+
+## Firebase
+
+Guia detallada: [`firebase/README.md`](firebase/README.md).
+
+El proyecto usa:
+
+- Firestore: `categorias`, `libros`, `pedidos`, `leads` y subcoleccion
+  `leads/{telefono}/mensajes`.
+- Auth: login del administrador.
+- Storage: portadas en `portadas/{libroId}`.
+- Admin SDK: funciones serverless que verifican tokens y escriben desde backend.
+
+Para desarrollo sin Firebase, el catalogo publico usa datos semilla locales. El
+panel `/admin` requiere Firebase configurado.
+
+## WhatsApp
+
+Guia detallada: [`docs/whatsapp-setup.md`](docs/whatsapp-setup.md).
+
+Actualmente hay dos flujos:
+
+- Enlaces `wa.me` para que clientes contacten a la libreria y para abrir el
+  resumen del pedido desde el checkout.
+- WhatsApp Cloud API para recibir/enviar mensajes por backend. Esta parte
+  requiere configuracion de Meta y variables privadas en Vercel.
 
 ## Estructura
 
-```
+```text
+api/
+  _lib/                 Firebase Admin SDK compartido
+  whatsapp/             endpoints send/webhook de WhatsApp Cloud API
 src/
-  components/   Header, Footer, BookCard, BookCover, TrustBadges, WhatsAppButton,
-                CheckoutModal (finalizar pedido), ...
-  context/      CartContext (carrito con persistencia local)
-  data/         seed.ts (datos de ejemplo) y catalogo.ts (acceso a datos)
-  hooks/        useCatalogo
-  lib/          firebase.ts, format.ts
-  pages/        Home, Catálogo, Detalle, Carrito, Admin
-  config.ts     contacto/marca (WhatsApp, Instagram)
+  components/           UI publica, carrito, checkout y componentes admin
+  components/admin/     Login, resumen, pedidos, libros y LeadsInbox
+  context/              CartContext y AuthContext
+  data/                 acceso a catalogo, pedidos, leads y seed local
+  hooks/                hooks de catalogo
+  lib/                  firebase, storage y formato
+  pages/                CatalogPage, BookDetailPage, AdminPage
+  config.ts             contacto/marca y enlaces de WhatsApp
 firebase/
-  firestore.rules      reglas de seguridad
-  catalogo.seed.json   catálogo de ejemplo
-  seed-firestore.mjs   carga del catálogo en Firestore
+  firestore.rules       reglas de Firestore
+  storage.rules         reglas de Storage
+  catalogo.seed.json    catalogo de ejemplo
+  seed-firestore.mjs    carga del catalogo en Firestore
+docs/
+  whatsapp-setup.md     guia de Meta / WhatsApp Cloud API
 ```
+
+## Seguridad
+
+- Las claves `VITE_FIREBASE_*` son publicas por diseno; la proteccion real vive
+  en las reglas de Firestore/Storage.
+- Las credenciales privadas (`FIREBASE_SERVICE_ACCOUNT`, `WHATSAPP_TOKEN`,
+  `WHATSAPP_APP_SECRET`) solo deben existir en el entorno server-side.
+- `api/whatsapp/send.ts` exige token de Firebase Auth del admin.
+- `api/whatsapp/webhook.ts` valida `X-Hub-Signature-256` con HMAC antes de
+  procesar mensajes entrantes.

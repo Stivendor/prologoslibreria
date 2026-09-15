@@ -1,5 +1,9 @@
 # Panel de administración `/admin` — Diseño
 
+> Nota de mantenimiento: este archivo es una especificacion historica del panel.
+> Puede diferir de la implementacion actual. Para el estado vigente del
+> proyecto, usar `README.md`, `firebase/README.md` y `docs/whatsapp-setup.md`.
+
 **Fecha:** 2026-07-10
 **Estado:** Aprobado en conversación; pendiente de plan de implementación.
 

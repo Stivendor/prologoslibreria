@@ -1,5 +1,10 @@
 # Panel de administración `/admin` — Plan de implementación
 
+> Nota de mantenimiento: este archivo es un plan historico de implementacion.
+> Puede contener rutas o tareas que cambiaron durante el desarrollo. Para el
+> estado vigente del proyecto, usar `README.md`, `firebase/README.md` y
+> `docs/whatsapp-setup.md`.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Panel `/admin` protegido con Firebase Auth: CRUD de libros con portada en Storage y seguimiento de pedidos en tiempo real, con el checkout guardando cada pedido en Firestore.
