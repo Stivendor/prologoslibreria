@@ -47,7 +47,10 @@ export async function crearPedido(datos: NuevoPedido): Promise<string | null> {
 }
 
 // Suscripción en tiempo real (más recientes primero). Devuelve el unsubscribe.
-export function suscribirsePedidos(callback: (pedidos: Pedido[]) => void): () => void {
+export function suscribirsePedidos(
+  callback: (pedidos: Pedido[]) => void,
+  onError?: (error: Error) => void
+): () => void {
   if (!db) return () => {};
   const q = query(collection(db, 'pedidos'), orderBy('creado_en', 'desc'));
   return onSnapshot(
@@ -57,6 +60,7 @@ export function suscribirsePedidos(callback: (pedidos: Pedido[]) => void): () =>
     },
     (error) => {
       console.error('Error en la suscripción de pedidos', error);
+      onError?.(error);
     }
   );
 }

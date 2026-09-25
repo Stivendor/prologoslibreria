@@ -40,7 +40,13 @@ export function PedidosPanel() {
   const [error, setError] = useState('');
 
   // Suscripción en vivo: los pedidos nuevos aparecen sin recargar.
-  useEffect(() => suscribirsePedidos(setPedidos), []);
+  useEffect(
+    () =>
+      suscribirsePedidos(setPedidos, () =>
+        setError('No se pudieron cargar los pedidos. Verifica que tu usuario tenga permisos de administrador.')
+      ),
+    []
+  );
 
   async function cambiarEstado(pedido: Pedido, estado: EstadoPedido) {
     if (pedido.estado === estado) return;
@@ -72,6 +78,7 @@ export function PedidosPanel() {
   if (pedidos.length === 0) {
     return (
       <div className="admin-vacio">
+        {error && <p className="field-error">{error}</p>}
         <p>
           Aún no hay pedidos. Cuando un cliente confirme su compra aparecerá aquí al
           instante.

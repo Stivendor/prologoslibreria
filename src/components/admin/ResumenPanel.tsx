@@ -16,8 +16,15 @@ function esDelMes(p: Pedido, ahora: Date): boolean {
 
 export function ResumenPanel() {
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
+  const [error, setError] = useState('');
 
-  useEffect(() => suscribirsePedidos(setPedidos), []);
+  useEffect(
+    () =>
+      suscribirsePedidos(setPedidos, () =>
+        setError('No se pudieron cargar los pedidos. Verifica que tu usuario tenga permisos de administrador.')
+      ),
+    []
+  );
 
   const ahora = new Date();
   // Los cancelados no cuentan como venta en ninguna métrica.
@@ -52,9 +59,10 @@ export function ResumenPanel() {
 
   if (pedidos.length === 0) {
     return (
-      <p className="admin-vacio">
-        Aún no hay pedidos: las estadísticas aparecerán con la primera venta.
-      </p>
+      <div className="admin-vacio">
+        {error && <p className="field-error">{error}</p>}
+        <p>Aún no hay pedidos: las estadísticas aparecerán con la primera venta.</p>
+      </div>
     );
   }
 
