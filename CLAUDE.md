@@ -51,13 +51,25 @@ human-readable number (`P-YYYYMMDD-XXXX`) and estado `nuevo`; the admin panel
 subscribes in real time (`suscribirsePedidos`, `onSnapshot`) and moves orders
 through estados (`nuevo → confirmado → enviado → entregado / cancelado`).
 
+**Customer accounts (`/cuenta`)** — `src/pages/CuentaPage.tsx` (lazy) with
+email/password login, signup and password reset. One shared `AuthProvider`
+(`src/context/AuthContext.tsx`) mounted **globally in `App.tsx`** — it serves
+both the store and `/admin`. Each client has a `usuarios/{uid}` document
+(profile + `email` copy + `activo` flag) managed through `src/data/usuarios.ts`
+(Firestore-only) and the `usePerfil` hook; the checkout prefills from it and
+orders carry an optional `uid_cliente` so "mis pedidos" can subscribe per user
+(`suscribirsePedidosCliente`). Blocking/deleting an Auth account can't be done
+from the browser: use `firebase/usuarios-admin.mjs` (Admin SDK).
+
 **Admin panel (`/admin`)** — `src/pages/AdminPage.tsx` with components under
 `src/components/admin/` (LoginForm, ResumenPanel, PedidosPanel, LibrosPanel,
-LibroForm). Three tabs: **Resumen** (client-side stats over the live orders
+LibroForm, UsuariosPanel). Four tabs: **Resumen** (client-side stats over the live orders
 subscription — nuevos, ingresos del mes, ticket promedio, top libros),
-**Pedidos**, and **Libros**. Lazy-loaded (`React.lazy` in `App.tsx`) to keep the
-panel out of the store bundle. Requires Firebase: email/password login via `src/context/AuthContext.tsx`
-(wraps only the `/admin` route), cover uploads via `src/lib/storage.ts`
+**Pedidos**, **Libros**, and **Usuarios** (live account list, edit shipping
+data, toggle `activo`). Lazy-loaded (`React.lazy` in `App.tsx`) to keep the
+panel out of the store bundle. Requires Firebase: email/password login via the
+shared `AuthProvider`; a logged-in client hitting `/admin` sees an
+"Acceso restringido" screen (guard on `UID_ADMIN` from `src/config.ts`), cover uploads via `src/lib/storage.ts`
 (`portadas/{libroId}` in Storage, validated size/type before upload). The
 `/admin` route renders **without** the store chrome (Header/Footer/WhatsApp) —
 see `Contenido()` in `App.tsx`. Write access is locked to the admin UID in the
@@ -67,6 +79,15 @@ published rules (`firebase/firestore.rules`, `firebase/storage.rules`).
 `localStorage` under key `prologos-carrito` (hydrated on init, saved on every
 change). Consume via `useCart()`; it throws if used outside `<CartProvider>`.
 `App.tsx` wraps everything in `CartProvider` → `BrowserRouter`.
+
+**Stock** — `src/lib/stock.ts` owns availability: `MAX_POR_LIBRO` (10, the
+global anti-junk cap) plus `maximoDisponible(libro)` / `estaAgotado` /
+`etiquetaStock`. A book's `stock` field is **optional**: absent/null = *bajo
+demanda* (no limit, no label), a number = units the customer may not exceed.
+The admin enters it in `LibroForm` (empty = bajo demanda); enforcement is
+**UI-only** (cart caps, BookCard/BookDetail labels, checkout blocks confirming
+and offers a one-click "Ajustar"), *not* in Firestore rules — orders aren't
+decremented automatically; the owner adjusts stock by hand from the panel.
 
 **Checkout via WhatsApp** — there is no payment integration. Orders are completed
 by building a `wa.me` link. `src/config.ts` centralizes contact/brand constants
@@ -78,7 +99,7 @@ WhatsApp must stay synchronous inside the click handler (Safari blocks popups
 born outside the user gesture).
 
 **Routing** — `App.tsx` defines all routes (`/`, `/catalogo`, `/libro/:id`,
-`/carrito`, `/admin`, `*` → Home). Global chrome (`Header`,
+`/carrito`, `/cuenta`, `/admin`, `*` → Home). Global chrome (`Header`,
 `Footer`, `WhatsAppButton`) sits outside `<Routes>` and is hidden on `/admin`.
 `<Routes>` is wrapped in `src/components/ErrorBoundary.tsx` so a render error in
 one page shows a fallback instead of blanking the app. The catalog paginates via

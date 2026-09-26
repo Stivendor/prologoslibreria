@@ -7,6 +7,7 @@ import {
   query,
   serverTimestamp,
   updateDoc,
+  where,
 } from 'firebase/firestore';
 import type { ClientePedido, EstadoPedido, Pedido, PedidoItem } from '../types';
 import { db } from '../lib/firebase';
@@ -33,11 +34,17 @@ function generarNumero(): string {
 
 // Crea el pedido con estado "nuevo". Devuelve su número, o null si no hay
 // Firebase configurado (modo seed: el pedido sigue solo por WhatsApp).
-export async function crearPedido(datos: NuevoPedido): Promise<string | null> {
+// uidCliente se guarda como uid_cliente solo cuando hay sesión: los pedidos
+// de invitados siguen siendo válidos (ver firebase/firestore.rules).
+export async function crearPedido(
+  datos: NuevoPedido,
+  uidCliente?: string | null
+): Promise<string | null> {
   if (!db) return null;
   const numero = generarNumero();
   await addDoc(collection(db, 'pedidos'), {
     ...datos,
+    ...(uidCliente ? { uid_cliente: uidCliente } : {}),
     numero,
     estado: 'nuevo',
     creado_en: serverTimestamp(),
@@ -68,4 +75,30 @@ export function suscribirsePedidos(
 export async function actualizarEstadoPedido(id: string, estado: EstadoPedido): Promise<void> {
   if (!db) throw new Error('El panel de administración requiere Firebase configurado.');
   await updateDoc(doc(db, 'pedidos', id), { estado, actualizado_en: serverTimestamp() });
+}
+
+// Pedidos de un solo cliente (uid_cliente). Se consulta por un solo campo para
+// no requerir un índice compuesto y se ordena en memoria: un cliente tiene
+// pocos pedidos. El admin también la usa para ver el historial de un usuario.
+export function suscribirsePedidosCliente(
+  uid: string,
+  callback: (pedidos: Pedido[]) => void,
+  onError?: (error: Error) => void
+): () => void {
+  if (!db) return () => {};
+  const q = query(collection(db, 'pedidos'), where('uid_cliente', '==', uid));
+  return onSnapshot(
+    q,
+    (snap) => {
+      const pedidos = snap.docs.map((d) => ({ id: d.id, ...d.data() })) as Pedido[];
+      pedidos.sort(
+        (a, b) => (b.creado_en?.toDate().getTime() ?? 0) - (a.creado_en?.toDate().getTime() ?? 0)
+      );
+      callback(pedidos);
+    },
+    (error) => {
+      console.error('Error en la suscripción de pedidos del cliente', error);
+      onError?.(error);
+    }
+  );
 }

@@ -1,12 +1,15 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { usandoFirebase } from '../lib/firebase';
+import { UID_ADMIN } from '../config';
 import { LoginForm } from '../components/admin/LoginForm';
 import { ResumenPanel } from '../components/admin/ResumenPanel';
 import { PedidosPanel } from '../components/admin/PedidosPanel';
 import { LibrosPanel } from '../components/admin/LibrosPanel';
+import { UsuariosPanel } from '../components/admin/UsuariosPanel';
 
-type Pestana = 'resumen' | 'pedidos' | 'libros';
+type Pestana = 'resumen' | 'pedidos' | 'libros' | 'usuarios';
 
 const NAV: { id: Pestana; label: string; icono: React.ReactNode }[] = [
   {
@@ -42,6 +45,18 @@ const NAV: { id: Pestana; label: string; icono: React.ReactNode }[] = [
       </svg>
     ),
   },
+  {
+    id: 'usuarios',
+    label: 'Usuarios',
+    icono: (
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <circle cx="9" cy="8" r="3.2" />
+        <path d="M3 19c.7-3 3-4.8 6-4.8s5.3 1.8 6 4.8" />
+        <path d="M16 5.2a3.2 3.2 0 0 1 0 5.6" />
+        <path d="M18 14.4c2 .8 3.3 2.4 3.7 4.6" />
+      </svg>
+    ),
+  },
 ];
 
 export function AdminPage() {
@@ -70,6 +85,28 @@ export function AdminPage() {
   }
 
   if (!usuario) return <LoginForm />;
+
+  // La sesión es única (AuthProvider global): una cuenta de cliente logueada
+  // no debe ver el panel, aunque Firestore ya le bloquee los datos.
+  if (usuario.uid !== UID_ADMIN) {
+    return (
+      <div className="container section admin-login">
+        <div className="admin-login__card">
+          <img src="/logo.svg" alt="" width={48} height={48} />
+          <h1>Acceso restringido</h1>
+          <p className="admin-login__sub">
+            La cuenta {usuario.email} no tiene acceso al panel de administración.
+          </p>
+          <Link to="/cuenta" className="btn btn--block">
+            Ir a mi cuenta
+          </Link>
+          <button type="button" className="btn btn--ghost btn--block" onClick={salir}>
+            Cerrar sesión
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const seleccionar = (id: Pestana) => {
     setPestana(id);
@@ -134,6 +171,7 @@ export function AdminPage() {
           {pestana === 'resumen' && <ResumenPanel />}
           {pestana === 'pedidos' && <PedidosPanel />}
           {pestana === 'libros' && <LibrosPanel />}
+          {pestana === 'usuarios' && <UsuariosPanel />}
         </div>
       </div>
     </div>

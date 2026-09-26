@@ -17,6 +17,10 @@ export interface Libro {
   destacado: boolean;
   /* Etiqueta editorial opcional (p. ej. "Novedad", "Clásico"). */
   etiqueta?: string;
+  /* Unidades disponibles. Ausente/null = bajo demanda (sin límite, que es
+     cómo trabaja Prólogos con la mayoría de títulos); número = tope que el
+     cliente no puede superar. El descuento es manual (panel admin). */
+  stock?: number | null;
 }
 
 export interface CartItem {
@@ -41,6 +45,24 @@ export interface ClientePedido {
   direccion: string;
 }
 
+// Datos de envío guardados en la cuenta de un cliente (colección usuarios).
+// El correo vive en Firebase Auth; aquí va copiado solo para listados.
+export interface Perfil {
+  nombre: string;
+  telefono: string;
+  ciudad: string;
+  direccion: string;
+}
+
+// Documento usuarios/{uid}: perfil + estado de la cuenta.
+export interface UsuarioCliente extends Perfil {
+  uid: string;
+  email: string;
+  activo: boolean;
+  creado_en?: TimestampFirestore;
+  actualizado_en?: TimestampFirestore;
+}
+
 export interface Pedido {
   id: string;
   numero: string; // corto y legible, p. ej. "P-20260710-A3F9"
@@ -48,6 +70,8 @@ export interface Pedido {
   total: number;
   cliente: ClientePedido;
   estado: EstadoPedido;
+  /* uid del comprador cuando tiene sesión; ausente en pedidos anónimos. */
+  uid_cliente?: string;
   /* Timestamps de Firestore tipados estructuralmente para no importar
      firebase aquí (seed.ts depende de este archivo). Null mientras el
      serverTimestamp está pendiente en snapshots locales. */

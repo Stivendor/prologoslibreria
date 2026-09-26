@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import type { Libro, PedidoItem } from '../../types';
 import { obtenerLibros } from '../../data/catalogo';
 import { crearPedido } from '../../data/pedidos';
-import { formatearPrecio } from '../../lib/format';
+import { formatearPrecio, soloDigitos } from '../../lib/format';
 
 // Alta manual de pedidos desde el panel (ventas cerradas por WhatsApp u otro
 // canal). Reusa crearPedido del checkout: mismo esquema, mismas reglas de
@@ -94,7 +94,13 @@ export function PedidoForm({
         </label>
         <label>
           Teléfono *
-          <input value={telefono} onChange={(e) => setTelefono(e.target.value)} required maxLength={30} />
+          <input
+            value={telefono}
+            onChange={(e) => setTelefono(soloDigitos(e.target.value))}
+            inputMode="numeric"
+            required
+            maxLength={30}
+          />
         </label>
       </div>
       <div className="admin-form__row">

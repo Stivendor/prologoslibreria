@@ -18,6 +18,8 @@ export function LibroForm({ libro, categorias, alTerminar, alCancelar }: Props) 
     descripcion: libro?.descripcion ?? '',
     categoria_id: libro?.categoria_id ?? categorias[0]?.id ?? '',
     etiqueta: libro?.etiqueta ?? '',
+    // Vacío = bajo demanda (sin límite); con número = unidades disponibles.
+    stock: libro?.stock != null ? String(libro.stock) : '',
     activo: libro?.activo ?? true,
     destacado: libro?.destacado ?? false,
   });
@@ -26,7 +28,7 @@ export function LibroForm({ libro, categorias, alTerminar, alCancelar }: Props) 
   const [error, setError] = useState('');
 
   const set =
-    (campo: 'titulo' | 'autor' | 'precio' | 'etiqueta') =>
+    (campo: 'titulo' | 'autor' | 'precio' | 'etiqueta' | 'stock') =>
     (e: ChangeEvent<HTMLInputElement>) =>
       setDatos((d) => ({ ...d, [campo]: e.target.value }));
 
@@ -51,11 +53,16 @@ export function LibroForm({ libro, categorias, alTerminar, alCancelar }: Props) 
     setPortada(archivo);
   }
 
+  const stockValido =
+    datos.stock.trim() === '' ||
+    (Number(datos.stock) >= 0 && Number.isInteger(Number(datos.stock)));
+
   const valido =
     datos.titulo.trim() !== '' &&
     datos.autor.trim() !== '' &&
     Number(datos.precio) > 0 &&
-    datos.categoria_id !== '';
+    datos.categoria_id !== '' &&
+    stockValido;
 
   async function guardar(e: FormEvent) {
     e.preventDefault();
@@ -70,6 +77,8 @@ export function LibroForm({ libro, categorias, alTerminar, alCancelar }: Props) 
         descripcion: datos.descripcion.trim(),
         categoria_id: datos.categoria_id,
         etiqueta: datos.etiqueta.trim(),
+        // null explícito = bajo demanda (Firestore no acepta undefined).
+        stock: stockValido && datos.stock.trim() !== '' ? Math.floor(Number(datos.stock)) : null,
         activo: datos.activo,
         destacado: datos.destacado,
       };
@@ -155,10 +164,24 @@ export function LibroForm({ libro, categorias, alTerminar, alCancelar }: Props) 
           <input value={datos.etiqueta} onChange={set('etiqueta')} />
         </label>
         <label>
-          Portada (imagen, máx. 5 MB)
-          <input type="file" accept="image/*" onChange={elegirPortada} />
+          Stock (vacío = bajo demanda, sin límite)
+          <input
+            type="number"
+            min="0"
+            step="1"
+            inputMode="numeric"
+            value={datos.stock}
+            onChange={set('stock')}
+            placeholder="Ej. 12"
+          />
+          {!stockValido && <span className="field-error">Ingresa un número entero igual o mayor a 0.</span>}
         </label>
       </div>
+
+      <label>
+        Portada (imagen, máx. 5 MB)
+        <input type="file" accept="image/*" onChange={elegirPortada} />
+      </label>
 
       {libro?.imagen_url && (
         <div className="admin-form__portada">

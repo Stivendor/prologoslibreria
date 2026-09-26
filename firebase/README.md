@@ -6,11 +6,12 @@ variables `VITE_FIREBASE_*` existen, la app consulta Firestore.
 
 ## Servicios usados
 
-- **Firestore**: catalogo, pedidos, leads y mensajes.
-- **Firebase Auth**: sesion del administrador en `/admin`.
+- **Firestore**: catalogo, pedidos, cuentas de cliente, leads y mensajes.
+- **Firebase Auth**: sesion de los clientes en `/cuenta` y del administrador
+  en `/admin` (un solo `AuthProvider` compartido).
 - **Firebase Storage**: portadas de libros.
 - **Firebase Admin SDK**: funciones serverless en `api/` para verificar tokens
-  y escribir desde backend.
+  y escribir desde backend; tambien el script `usuarios-admin.mjs`.
 
 ## Modelo de datos
 
@@ -35,6 +36,7 @@ variables `VITE_FIREBASE_*` existen, la app consulta Firestore.
 | `activo` | boolean |
 | `destacado` | boolean |
 | `etiqueta` | string opcional |
+| `stock` | number / null opcional (unidades; null o ausente = bajo demanda, sin límite) |
 | `creado_en` | timestamp |
 
 ### `pedidos`
@@ -45,7 +47,25 @@ variables `VITE_FIREBASE_*` existen, la app consulta Firestore.
 | `items` | lista de `{ libro_id, titulo, precio, cantidad }` |
 | `total` | number |
 | `cliente` | `{ nombre, telefono, email, ciudad, direccion }` |
+| `uid_cliente` | string opcional, uid del comprador si tenia sesion |
 | `estado` | `nuevo`, `confirmado`, `enviado`, `entregado` o `cancelado` |
+| `creado_en` | timestamp |
+| `actualizado_en` | timestamp |
+
+### `usuarios/{uid}`
+
+Cuentas de cliente. El `uid` del documento es el uid de Firebase Auth y el
+`email` va copiado aqui porque Auth no permite listar correos de otros
+usuarios desde el navegador.
+
+| Campo | Tipo |
+| --- | --- |
+| `nombre` | string |
+| `telefono` | string |
+| `ciudad` | string |
+| `direccion` | string |
+| `email` | string, copia del correo de Auth |
+| `activo` | boolean, lo alterna el panel admin |
 | `creado_en` | timestamp |
 | `actualizado_en` | timestamp |
 
@@ -88,6 +108,7 @@ Usado por la integracion de WhatsApp Cloud API.
    - `firebase/firestore.rules`
    - `firebase/storage.rules`
    - `api/_lib/firebaseAdmin.ts` (`ADMIN_UID`)
+   - `src/config.ts` (`UID_ADMIN`, usado para distinguir clientes de admin)
 5. Habilitar Storage.
 6. Publicar reglas:
 
@@ -105,6 +126,20 @@ node firebase/seed-firestore.mjs
 El script de seed usa `firebase/serviceAccount.json` local. Ese archivo esta en
 `.gitignore` y no debe subirse al repositorio.
 
+## Gestion de cuentas de cliente
+
+El panel admin (`/admin` → pestaña **Usuarios**) lista las cuentas en vivo,
+permite editar sus datos de envio y marcarlas como inactivas. El bloqueo real
+del login y el borrado definitivo de una cuenta de Firebase Auth no pueden
+hacerse desde el navegador: se ejecutan en local con el Admin SDK:
+
+```bash
+node firebase/usuarios-admin.mjs listar
+node firebase/usuarios-admin.mjs bloquear <uid>
+node firebase/usuarios-admin.mjs desbloquear <uid>
+node firebase/usuarios-admin.mjs borrar <uid>
+```
+
 ## Variables privadas de backend
 
 Las funciones serverless necesitan:
@@ -118,6 +153,8 @@ Estas variables no deben tener prefijo `VITE_`.
 ## Reglas
 
 - `firestore.rules`: lectura publica de catalogo, creacion publica validada de
-  pedidos, y lectura/escritura administrativa limitada al UID del admin.
+  pedidos (con `uid_cliente` opcional vinculado a la sesion), cuentas
+  `usuarios/{uid}` con acceso solo para su dueño y para el admin, y
+  lectura/escritura administrativa limitada al UID del admin.
 - `storage.rules`: lectura publica de portadas; escritura/borrado solo admin,
   con limite de imagen de 5 MB.

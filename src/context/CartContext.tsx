@@ -8,12 +8,13 @@ import {
   type ReactNode,
 } from 'react';
 import type { CartItem, Libro } from '../types';
+import { maximoDisponible } from '../lib/stock';
 
 const STORAGE_KEY = 'prologos-carrito';
 
-/* Tope de unidades por libro: evita pedidos basura (39 copias del mismo título).
-   Un pedido mayorista real se gestiona por WhatsApp de todos modos. */
-export const MAX_POR_LIBRO = 10;
+// El tope por libro se define en lib/stock: lo comparten la UI del catálogo,
+// el carrito y el checkout. Se re-exporta aquí por compatibilidad.
+export { MAX_POR_LIBRO } from '../lib/stock';
 
 interface CartContextValue {
   items: CartItem[];
@@ -36,10 +37,11 @@ function cargarInicial(): CartItem[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return [];
-    // Sanea carritos guardados antes de existir el tope.
+    // Sanea carritos guardados: aplica el tope global y el stock actual
+    // (alguien pudo bajarlo desde el panel mientras el carrito estaba guardado).
     return (JSON.parse(raw) as CartItem[]).map((i) => ({
       ...i,
-      cantidad: Math.min(i.cantidad, MAX_POR_LIBRO),
+      cantidad: Math.max(1, Math.min(i.cantidad, maximoDisponible(i.libro))),
     }));
   } catch {
     return [];
@@ -59,16 +61,19 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, [items]);
 
   const agregar = useCallback((libro: Libro, cantidad = 1) => {
+    const max = maximoDisponible(libro);
+    if (max <= 0) return; // agotado: ni siquiera entra al carrito
     setItems((prev) => {
       const existente = prev.find((i) => i.libro.id === libro.id);
       if (existente) {
+        // Se re-guarda el libro: así el carrito refleja precio y stock actuales.
         return prev.map((i) =>
           i.libro.id === libro.id
-            ? { ...i, cantidad: Math.min(i.cantidad + cantidad, MAX_POR_LIBRO) }
+            ? { libro, cantidad: Math.min(i.cantidad + cantidad, max) }
             : i,
         );
       }
-      return [...prev, { libro, cantidad: Math.min(cantidad, MAX_POR_LIBRO) }];
+      return [...prev, { libro, cantidad: Math.min(cantidad, max) }];
     });
   }, []);
 
@@ -82,7 +87,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         ? prev.filter((i) => i.libro.id !== libroId)
         : prev.map((i) =>
             i.libro.id === libroId
-              ? { ...i, cantidad: Math.min(cantidad, MAX_POR_LIBRO) }
+              ? { ...i, cantidad: Math.min(cantidad, maximoDisponible(i.libro)) }
               : i,
           ),
     );

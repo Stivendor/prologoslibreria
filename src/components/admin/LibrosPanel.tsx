@@ -141,6 +141,7 @@ export function LibrosPanel() {
                 <th>Autor</th>
                 <th>Precio</th>
                 <th>Categoría</th>
+                <th>Stock</th>
                 <th>Estado</th>
                 <th></th>
               </tr>
@@ -153,6 +154,17 @@ export function LibrosPanel() {
                   <td>{libro.autor}</td>
                   <td>{formatearPrecio(libro.precio)}</td>
                   <td>{nombreCategoria(libro.categoria_id)}</td>
+                  <td>
+                    {/* Sin stock cargado = bajo demanda, cómo trabaja la
+                        librería con la mayoría de títulos. */}
+                    {libro.stock == null ? (
+                      <span className="muted">Bajo demanda</span>
+                    ) : libro.stock <= 0 ? (
+                      <span className="admin-badge admin-badge--off">Agotado</span>
+                    ) : (
+                      libro.stock
+                    )}
+                  </td>
                   <td>
                     <span className={`admin-badge${libro.activo ? '' : ' admin-badge--off'}`}>
                       {libro.activo ? 'Visible' : 'Oculto'}

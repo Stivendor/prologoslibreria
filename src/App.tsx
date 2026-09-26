@@ -11,9 +11,13 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 import { CatalogPage } from './pages/CatalogPage';
 import { BookDetailPage } from './pages/BookDetailPage';
 
-// El panel es solo para el admin: no debe pesar en el bundle de la tienda.
+// El panel y la cuenta son solo para usuarios con sesión: no deben pesar en
+// el bundle de la tienda.
 const AdminPage = lazy(() =>
   import('./pages/AdminPage').then((m) => ({ default: m.AdminPage }))
+);
+const CuentaPage = lazy(() =>
+  import('./pages/CuentaPage').then((m) => ({ default: m.CuentaPage }))
 );
 
 // /catalogo vivía como ruta propia; redirige a la landing conservando ?categoria=...
@@ -56,13 +60,19 @@ function Contenido() {
             <Route path="/libro/:id" element={<BookDetailPage />} />
             <Route path="/carrito" element={<RedirigirCarrito />} />
             <Route
+              path="/cuenta"
+              element={
+                <Suspense fallback={<div className="container section">Cargando…</div>}>
+                  <CuentaPage />
+                </Suspense>
+              }
+            />
+            <Route
               path="/admin"
               element={
-                <AuthProvider>
-                  <Suspense fallback={<div className="container section">Cargando…</div>}>
-                    <AdminPage />
-                  </Suspense>
-                </AuthProvider>
+                <Suspense fallback={<div className="container section">Cargando…</div>}>
+                  <AdminPage />
+                </Suspense>
               }
             />
             <Route path="*" element={<CatalogPage />} />
@@ -78,11 +88,13 @@ function Contenido() {
 
 export default function App() {
   return (
-    <CartProvider>
-      <BrowserRouter>
-        <Contenido />
-        <Analytics />
-      </BrowserRouter>
-    </CartProvider>
+    <AuthProvider>
+      <CartProvider>
+        <BrowserRouter>
+          <Contenido />
+          <Analytics />
+        </BrowserRouter>
+      </CartProvider>
+    </AuthProvider>
   );
 }

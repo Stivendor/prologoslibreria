@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useCart, MAX_POR_LIBRO } from '../context/CartContext';
+import { useCart } from '../context/CartContext';
 import { formatearPrecio } from '../lib/format';
+import { maximoDisponible } from '../lib/stock';
 import { BookCover } from './BookCover';
 import { CheckoutModal } from './CheckoutModal';
 
@@ -64,52 +65,58 @@ export function CartDrawer() {
             </div>
           ) : (
             <ul className="cart-list">
-              {items.map(({ libro, cantidad }) => (
-                <li key={libro.id} className="cart-item">
-                  <div className="cart-item__cover">
-                    <BookCover libro={libro} />
-                  </div>
-                  <div className="cart-item__info">
-                    {/* Navegar con el diálogo abierto dejaría la página detrás
-                        del backdrop: cerrar antes de ir al detalle. */}
-                    <Link
-                      to={`/libro/${libro.id}`}
-                      className="cart-item__title"
-                      onClick={cerrarCarrito}
-                    >
-                      {libro.titulo}
-                    </Link>
-                    <p className="muted small">{libro.autor}</p>
-                    <p className="cart-item__price">{formatearPrecio(libro.precio)}</p>
-                  </div>
-                  <div className="cart-item__controls">
-                    <div className="qty">
-                      <button
-                        onClick={() => cambiarCantidad(libro.id, cantidad - 1)}
-                        aria-label="Disminuir cantidad"
+              {items.map(({ libro, cantidad }) => {
+                // Tope real de este título: el global o su stock cargado.
+                const max = maximoDisponible(libro);
+                return (
+                  <li key={libro.id} className="cart-item">
+                    <div className="cart-item__cover">
+                      <BookCover libro={libro} />
+                    </div>
+                    <div className="cart-item__info">
+                      {/* Navegar con el diálogo abierto dejaría la página detrás
+                          del backdrop: cerrar antes de ir al detalle. */}
+                      <Link
+                        to={`/libro/${libro.id}`}
+                        className="cart-item__title"
+                        onClick={cerrarCarrito}
                       >
-                        −
-                      </button>
-                      <span>{cantidad}</span>
-                      <button
-                        onClick={() => cambiarCantidad(libro.id, cantidad + 1)}
-                        disabled={cantidad >= MAX_POR_LIBRO}
-                        title={
-                          cantidad >= MAX_POR_LIBRO
-                            ? `Máximo ${MAX_POR_LIBRO} unidades por libro`
-                            : undefined
-                        }
-                        aria-label="Aumentar cantidad"
-                      >
-                        +
+                        {libro.titulo}
+                      </Link>
+                      <p className="muted small">{libro.autor}</p>
+                      <p className="cart-item__price">{formatearPrecio(libro.precio)}</p>
+                    </div>
+                    <div className="cart-item__controls">
+                      <div className="qty">
+                        <button
+                          onClick={() => cambiarCantidad(libro.id, cantidad - 1)}
+                          aria-label="Disminuir cantidad"
+                        >
+                          −
+                        </button>
+                        <span>{cantidad}</span>
+                        <button
+                          onClick={() => cambiarCantidad(libro.id, cantidad + 1)}
+                          disabled={cantidad >= max}
+                          title={
+                            cantidad >= max
+                              ? max === 0
+                                ? 'Libro agotado'
+                                : `Máximo ${max} unidades disponibles`
+                              : undefined
+                          }
+                          aria-label="Aumentar cantidad"
+                        >
+                          +
+                        </button>
+                      </div>
+                      <button className="link small" onClick={() => quitar(libro.id)}>
+                        Quitar
                       </button>
                     </div>
-                    <button className="link small" onClick={() => quitar(libro.id)}>
-                      Quitar
-                    </button>
-                  </div>
-                </li>
-              ))}
+                  </li>
+                );
+              })}
             </ul>
           )}
         </div>

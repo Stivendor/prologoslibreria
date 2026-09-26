@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import type { Libro } from '../types';
 import { obtenerLibro } from '../data/catalogo';
 import { formatearPrecio } from '../lib/format';
+import { maximoDisponible, etiquetaStock } from '../lib/stock';
 import { useCart } from '../context/CartContext';
 import { useCatalogo } from '../hooks/useCatalogo';
 import { BookCover } from '../components/BookCover';
@@ -11,7 +12,7 @@ import { urlWhatsApp } from '../config';
 
 export function BookDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const { agregar } = useCart();
+  const { agregar, items } = useCart();
   const { libros } = useCatalogo();
   const [libro, setLibro] = useState<Libro | null>(null);
   const [cargando, setCargando] = useState(true);
@@ -37,7 +38,16 @@ export function BookDetailPage() {
       </div>
     );
 
+  // Disponibilidad: sin stock cargado es bajo demanda (sin límite ni aviso).
+  const max = maximoDisponible(libro);
+  const enCarrito = items.find((i) => i.libro.id === libro.id)?.cantidad ?? 0;
+  const agotado = max === 0;
+  const lleno = !agotado && enCarrito >= max;
+  const bloqueado = agotado || lleno;
+  const stock = etiquetaStock(libro);
+
   const handleAgregar = () => {
+    if (bloqueado) return;
     agregar(libro);
     setAgregado(true);
     setTimeout(() => setAgregado(false), 1800);
@@ -66,11 +76,31 @@ export function BookDetailPage() {
           <h1>{libro.titulo}</h1>
           <p className="detail__author">{libro.autor}</p>
           <p className="detail__price">{formatearPrecio(libro.precio)}</p>
+          {stock && (
+            <p className={`detail__stock${agotado ? ' detail__stock--out' : ''}`}>{stock}</p>
+          )}
           <p className="detail__desc">{libro.descripcion}</p>
 
           <div className="detail__actions">
-            <button className="btn btn--lg" onClick={handleAgregar}>
-              {agregado ? '✓ Agregado' : 'Agregar al carrito'}
+            <button
+              className="btn btn--lg"
+              onClick={handleAgregar}
+              disabled={bloqueado}
+              title={
+                agotado
+                  ? 'Por ahora no tenemos unidades de este libro.'
+                  : lleno
+                    ? `Ya tienes el máximo disponible (${max}) en el carrito.`
+                    : undefined
+              }
+            >
+              {agotado
+                ? 'Agotado'
+                : lleno
+                  ? 'Máximo en carrito'
+                  : agregado
+                    ? '✓ Agregado'
+                    : 'Agregar al carrito'}
             </button>
             <a
               className="btn btn--ghost btn--lg"
