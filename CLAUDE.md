@@ -14,14 +14,23 @@ order-completion channel (no payment gateway yet). There is an admin panel at
 ## Commands
 
 ```bash
-npm run dev      # Vite dev server
-npm run build    # tsc -b (type-check) + vite build — use this to verify a change compiles
-npm run lint     # oxlint
-npm run preview  # serve the production build
+npm run dev        # Vite dev server
+npm run build      # tsc -b (type-check) + vite build — use this to verify a change compiles
+npm run lint       # oxlint
+npm test           # vitest run (unit + component tests)
+npm run test:watch # vitest in watch mode
+npm run preview    # serve the production build
 ```
 
-There is no test framework. Verify changes with `npm run build` (type-check) and
-by driving the app in the browser.
+Tests are **Vitest + Testing Library (jsdom)**, co-located as
+`src/**/*.test.ts(x)` and configured in `vitest.config.ts` (separate from
+`vite.config.ts`, so `npm run build` is unaffected). `src/test/setup.ts`
+installs jest-dom, stubs `<dialog>`/`scrollIntoView` and replaces Node's broken
+global `localStorage`. Import `describe/it/expect/vi` explicitly — no globals.
+Because your local `.env` has real credentials (`db`/`auth` non-null), tests
+that need the seed branch must `vi.mock('../lib/firebase', …)` per file, and
+Firestore tests also mock `firebase/firestore`. Verify with `npm test`,
+`npm run build` and `npm run lint`.
 
 ## Architecture
 
