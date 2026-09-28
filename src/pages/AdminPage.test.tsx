@@ -1,9 +1,9 @@
 import { MemoryRouter } from 'react-router-dom';
-import { render, screen } from '@testing-library/react';
+import { cleanup, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import type { User } from 'firebase/auth';
-import { UID_ADMIN } from '../config';
+import { UIDS_ADMIN } from '../config';
 import { useAuth } from '../context/AuthContext';
 import { AdminPage } from './AdminPage';
 
@@ -86,7 +86,7 @@ describe('AdminPage: guards', () => {
 
 describe('AdminPage: panel del administrador', () => {
   it('muestra las cuatro secciones y arranca en Resumen', () => {
-    sesion(UID_ADMIN, 'admin@correo.com');
+    sesion(UIDS_ADMIN[0], 'admin@correo.com');
     pintar();
 
     expect(screen.getByRole('navigation', { name: 'Secciones del panel' })).toBeInTheDocument();
@@ -97,9 +97,19 @@ describe('AdminPage: panel del administrador', () => {
     expect(screen.getByText('admin@correo.com')).toBeInTheDocument();
   });
 
+  it('todas las cuentas de UIDS_ADMIN entran al panel', () => {
+    for (const uid of UIDS_ADMIN) {
+      sesion(uid, 'admin@correo.com');
+      pintar();
+
+      expect(screen.getByRole('navigation', { name: 'Secciones del panel' })).toBeInTheDocument();
+      cleanup();
+    }
+  });
+
   it('cambia de pestaña', async () => {
     const usuario = userEvent.setup();
-    sesion(UID_ADMIN);
+    sesion(UIDS_ADMIN[0]);
     pintar();
 
     await usuario.click(screen.getByRole('button', { name: 'Pedidos' }));
@@ -114,7 +124,7 @@ describe('AdminPage: panel del administrador', () => {
     const usuario = userEvent.setup();
     const salir = vi.fn();
     vi.mocked(useAuth).mockReturnValue({
-      usuario: { uid: UID_ADMIN, email: 'admin@correo.com' } as User,
+      usuario: { uid: UIDS_ADMIN[0], email: 'admin@correo.com' } as User,
       cargando: false,
       cuentaDesactivada: false,
       entrar: vi.fn(),

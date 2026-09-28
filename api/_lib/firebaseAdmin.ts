@@ -20,5 +20,11 @@ function getApp(): App {
 export const adminDb = () => getFirestore(getApp());
 export const adminAuth = () => getAuth(getApp());
 
-// UID del administrador (mismo que en firebase/firestore.rules).
-export const ADMIN_UID = 'MLMKGU0Pvmex6W7gPCYqRS99KQ92';
+// UIDs de los administradores (mismos que en firebase/firestore.rules y
+// src/config.ts).
+export const ADMIN_UIDS = [
+  'Ie9PZpQ2b3V2DnOHMCtPpKo0cTD3', // admin@gmail.com
+  'MLMKGU0Pvmex6W7gPCYqRS99KQ92', // stivendor101@gmail.com
+];
+
+export const esAdminUid = (uid: string) => ADMIN_UIDS.includes(uid);

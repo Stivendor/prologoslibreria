@@ -1,5 +1,5 @@
 import { FieldValue } from 'firebase-admin/firestore';
-import { ADMIN_UID, adminAuth, adminDb } from '../_lib/firebaseAdmin';
+import { adminAuth, adminDb, esAdminUid } from '../_lib/firebaseAdmin';
 
 // Envío de mensajes de WhatsApp desde el panel admin.
 // Solo el administrador autenticado (Firebase ID token) puede llamar aquí:
@@ -38,7 +38,7 @@ export default async function handler(req: Req, res: Res) {
     res.status(401).json({ error: 'Token inválido' });
     return;
   }
-  if (uid !== ADMIN_UID) {
+  if (!esAdminUid(uid)) {
     res.status(403).json({ error: 'No autorizado' });
     return;
   }

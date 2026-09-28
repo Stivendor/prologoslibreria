@@ -6,14 +6,20 @@ service firebase.storage {
   match /b/{bucket}/o {
     match /portadas/{archivo} {
       allow read: if true;
-      // Crear/actualizar: solo el admin, imágenes de máximo 5 MB.
+      // Crear/actualizar: solo los admins, imágenes de máximo 5 MB.
       allow create, update: if request.auth != null
-        && request.auth.uid == 'MLMKGU0Pvmex6W7gPCYqRS99KQ92'
+        && request.auth.uid in [
+          'Ie9PZpQ2b3V2DnOHMCtPpKo0cTD3',
+          'MLMKGU0Pvmex6W7gPCYqRS99KQ92'
+        ]
         && request.resource.size < 5 * 1024 * 1024
         && request.resource.contentType.matches('image/.*');
-      // Borrar: solo el admin (request.resource es null en deletes).
+      // Borrar: solo los admins (request.resource es null en deletes).
       allow delete: if request.auth != null
-        && request.auth.uid == 'MLMKGU0Pvmex6W7gPCYqRS99KQ92';
+        && request.auth.uid in [
+          'Ie9PZpQ2b3V2DnOHMCtPpKo0cTD3',
+          'MLMKGU0Pvmex6W7gPCYqRS99KQ92'
+        ];
     }
   }
 }

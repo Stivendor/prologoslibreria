@@ -72,7 +72,7 @@ publico.
 
 1. Metodo `POST`.
 2. Header `Authorization: Bearer <Firebase ID token>`.
-3. UID igual al `ADMIN_UID` configurado en `api/_lib/firebaseAdmin.ts`.
+3. UID presente en `ADMIN_UIDS` (`api/_lib/firebaseAdmin.ts`).
 4. `telefono` numerico de 6 a 15 digitos.
 5. `texto` no vacio y de maximo 4096 caracteres.
 

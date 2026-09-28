@@ -7,9 +7,14 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // UID del usuario administrador (Firebase Auth → Users).
+    // UIDs de los usuarios administradores (Firebase Auth → Users). Deben
+    // coincidir con UIDS_ADMIN en src/config.ts y ADMIN_UIDS en
+    // api/_lib/firebaseAdmin.ts.
     function esAdmin() {
-      return request.auth != null && request.auth.uid == 'MLMKGU0Pvmex6W7gPCYqRS99KQ92';
+      return request.auth != null && request.auth.uid in [
+        'Ie9PZpQ2b3V2DnOHMCtPpKo0cTD3',
+        'MLMKGU0Pvmex6W7gPCYqRS99KQ92'
+      ];
     }
 
     // Un ítem del pedido: solo las claves esperadas, con tipos y rangos sanos.

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { usandoFirebase } from '../lib/firebase';
-import { UID_ADMIN } from '../config';
+import { esAdmin } from '../config';
 import { LoginForm } from '../components/admin/LoginForm';
 import { ResumenPanel } from '../components/admin/ResumenPanel';
 import { PedidosPanel } from '../components/admin/PedidosPanel';
@@ -88,7 +88,7 @@ export function AdminPage() {
 
   // La sesión es única (AuthProvider global): una cuenta de cliente logueada
   // no debe ver el panel, aunque Firestore ya le bloquee los datos.
-  if (usuario.uid !== UID_ADMIN) {
+  if (!esAdmin(usuario.uid)) {
     return (
       <div className="container section admin-login">
         <div className="admin-login__card">

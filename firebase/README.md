@@ -104,11 +104,12 @@ Usado por la integracion de WhatsApp Cloud API.
    `VITE_FIREBASE_PROJECT_ID`, `VITE_FIREBASE_STORAGE_BUCKET`,
    `VITE_FIREBASE_MESSAGING_SENDER_ID` y `VITE_FIREBASE_APP_ID`.
 3. Habilitar Authentication con proveedor Email/Password.
-4. Crear el usuario administrador y copiar su UID en:
-   - `firebase/firestore.rules`
+4. Crear los usuarios administradores y copiar sus UIDs en (la lista debe
+   coincidir en los cuatro archivos):
+   - `firebase/firestore.rules` (`esAdmin()`)
    - `firebase/storage.rules`
-   - `api/_lib/firebaseAdmin.ts` (`ADMIN_UID`)
-   - `src/config.ts` (`UID_ADMIN`, usado para distinguir clientes de admin)
+   - `api/_lib/firebaseAdmin.ts` (`ADMIN_UIDS`)
+   - `src/config.ts` (`UIDS_ADMIN`, usado para distinguir clientes de admin)
 5. Habilitar Storage.
 6. Publicar reglas:
 

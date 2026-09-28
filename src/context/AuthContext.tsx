@@ -8,7 +8,7 @@ import {
   type User,
 } from 'firebase/auth';
 import { auth } from '../lib/firebase';
-import { UID_ADMIN } from '../config';
+import { esAdmin } from '../config';
 import { crearPerfil, obtenerCuenta } from '../data/usuarios';
 
 // Sesión única de la app: la comparten la tienda (cuentas de cliente en
@@ -44,7 +44,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setCargando(false);
       if (!u) return;
       // El administrador no tiene documento en usuarios/ (no es un cliente).
-      if (u.uid === UID_ADMIN) return;
+      if (esAdmin(u.uid)) return;
       // Auto-sanación: si el registro no llegó a crear el documento, aquí se
       // crea; y si el panel marcó la cuenta como inactiva, se cierra sesión.
       (async () => {

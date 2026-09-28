@@ -7,10 +7,19 @@ export const CONTACTO = {
   nombre: 'Prólogos Librería',
 };
 
-// UID del administrador en Firebase Auth. Debe coincidir con esAdmin() en
-// firebase/firestore.rules; se expone aquí para que la UI distinga una cuenta
-// de cliente de una de administrador (el acceso real lo otorgan las rules).
-export const UID_ADMIN = 'MLMKGU0Pvmex6W7gPCYqRS99KQ92';
+// UIDs de las cuentas administradoras en Firebase Auth. Deben coincidir con
+// esAdmin() en firebase/firestore.rules y con ADMIN_UIDS en
+// api/_lib/firebaseAdmin.ts; se exponen aquí para que la UI distinga una
+// cuenta de cliente de una de administrador (el acceso real lo otorgan las
+// rules).
+export const UIDS_ADMIN = [
+  'Ie9PZpQ2b3V2DnOHMCtPpKo0cTD3', // admin@gmail.com
+  'MLMKGU0Pvmex6W7gPCYqRS99KQ92', // stivendor101@gmail.com
+] as const;
+
+export function esAdmin(uid?: string | null): boolean {
+  return Boolean(uid) && (UIDS_ADMIN as readonly string[]).includes(uid as string);
+}
 
 export function urlWhatsApp(mensaje: string): string {
   return `https://wa.me/${CONTACTO.whatsapp}?text=${encodeURIComponent(mensaje)}`;

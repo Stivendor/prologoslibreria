@@ -78,7 +78,7 @@ subscription — nuevos, ingresos del mes, ticket promedio, top libros),
 data, toggle `activo`). Lazy-loaded (`React.lazy` in `App.tsx`) to keep the
 panel out of the store bundle. Requires Firebase: email/password login via the
 shared `AuthProvider`; a logged-in client hitting `/admin` sees an
-"Acceso restringido" screen (guard on `UID_ADMIN` from `src/config.ts`), cover uploads via `src/lib/storage.ts`
+"Acceso restringido" screen (guard on `esAdmin()` / `UIDS_ADMIN` from `src/config.ts`), cover uploads via `src/lib/storage.ts`
 (`portadas/{libroId}` in Storage, validated size/type before upload). The
 `/admin` route renders **without** the store chrome (Header/Footer/WhatsApp) —
 see `Contenido()` in `App.tsx`. Write access is locked to the admin UID in the
